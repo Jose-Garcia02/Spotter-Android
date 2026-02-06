@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:background="@color/background_dark">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/stats_title"
+        android:textColor="@color/text_primary"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="16dp"
+        android:layout_gravity="center_horizontal"/>
+
+    <Button
+        android:id="@+id/btn_open_weight_tracker"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Seguimiento de Peso Corporal"
+        android:backgroundTint="@color/surface_card"
+        android:textColor="@color/text_primary"
+        android:drawableStart="@drawable/ic_chart"
+        android:drawableTint="@color/vivid_green"
+        android:layout_marginBottom="16dp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/select_exercise"
+        android:textColor="@color/text_secondary"
+        android:textSize="14sp"
+        android:layout_marginBottom="8dp"/>
+
+    <Spinner
+        android:id="@+id/spinnerExercises"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="@drawable/bg_input_rounded"
+        android:layout_marginBottom="16dp"
+        android:padding="4dp"/>
+
+    <RadioGroup
+        android:id="@+id/radioGroupMetric"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:layout_marginBottom="16dp">
+
+        <RadioButton
+            android:id="@+id/rbWeight"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/metric_weight"
+            android:textColor="@color/text_primary"
+            android:buttonTint="@color/primary_accent"
+            android:checked="true"
+            android:layout_marginEnd="24dp"/>
+
+        <RadioButton
+            android:id="@+id/rbReps"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/metric_reps"
+            android:textColor="@color/text_primary"
+            android:buttonTint="@color/primary_accent" />
+    </RadioGroup>
+
+    <com.github.mikephil.charting.charts.LineChart
+        android:id="@+id/chartProgress"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:minHeight="250dp"
+        android:layout_marginBottom="8dp"/>
+
+    <!-- Series Filter / Legend -->
+    <HorizontalScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:scrollbars="none">
+
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/chipGroupSeries"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:singleSelection="false"
+            app:selectionRequired="false">
+        </com.google.android.material.chip.ChipGroup>
+    </HorizontalScrollView>
+
+    <TextView
+        android:id="@+id/tvStatsSummary"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/stats_placeholder"
+        android:textColor="@color/text_primary"
+        android:textSize="14sp"
+        android:gravity="center"
+        android:paddingBottom="60dp"/> <!-- Padding for bottom nav -->
+
+</LinearLayout>

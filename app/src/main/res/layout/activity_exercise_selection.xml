@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="?android:attr/windowBackground">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Seleccionar Ejercicios"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:textColor="@color/text_primary"
+        android:padding="16dp"
+        android:gravity="center"
+        android:background="@color/surface_dark"/>
+
+    <EditText
+        android:id="@+id/etSearch"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Buscar ejercicio..."
+        android:textColor="@color/text_primary"
+        android:textColorHint="@color/text_secondary"
+        android:background="@drawable/bg_input_rounded"
+        android:padding="12dp"
+        android:layout_margin="16dp"
+        android:drawableStart="@android:drawable/ic_menu_search"
+        android:drawableTint="@color/text_secondary"
+        />
+
+    <!-- Add New Exercise Button (Text style) -->
+    <TextView
+        android:id="@+id/btnCreateExercise"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="+ Crear nuevo ejercicio"
+        android:textColor="@color/vivid_blue"
+        android:textStyle="bold"
+        android:padding="12dp"
+        android:gravity="center"
+        android:background="?attr/selectableItemBackground"/>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerExercises"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:padding="8dp"/>
+
+    <Button
+        android:id="@+id/btnStartFreeWorkout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Iniciar Entrenamiento (0)"
+        android:layout_margin="16dp"
+        android:backgroundTint="@color/vivid_green"
+        android:textColor="@color/white"/>
+
+</LinearLayout>

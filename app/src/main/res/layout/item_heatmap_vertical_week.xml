@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/containerDays"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="2dp">
+
+    <!-- 7 Days (Mon-Sun) stacked vertically -->
+    <View
+        android:layout_width="16dp"
+        android:layout_height="16dp"
+        android:layout_margin="2dp"
+        android:background="@drawable/bg_heatmap_empty" />
+
+    <View
+        android:layout_width="16dp"
+        android:layout_height="16dp"
+        android:layout_margin="2dp"
+        android:background="@drawable/bg_heatmap_empty" />
+
+    <View
+        android:layout_width="16dp"
+        android:layout_height="16dp"
+        android:layout_margin="2dp"
+        android:background="@drawable/bg_heatmap_empty" />
+
+    <View
+        android:layout_width="16dp"
+        android:layout_height="16dp"
+        android:layout_margin="2dp"
+        android:background="@drawable/bg_heatmap_empty" />
+
+    <View
+        android:layout_width="16dp"
+        android:layout_height="16dp"
+        android:layout_margin="2dp"
+        android:background="@drawable/bg_heatmap_empty" />
+
+    <View
+        android:layout_width="16dp"
+        android:layout_height="16dp"
+        android:layout_margin="2dp"
+        android:background="@drawable/bg_heatmap_empty" />
+
+    <View
+        android:layout_width="16dp"
+        android:layout_height="16dp"
+        android:layout_margin="2dp"
+        android:background="@drawable/bg_heatmap_empty" />
+
+</LinearLayout>

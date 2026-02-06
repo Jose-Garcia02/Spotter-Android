@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true"
+    android:background="?android:attr/windowBackground">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="24dp">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Ajustes y Datos"
+        android:textColor="@color/text_primary"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="32dp"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_marginBottom="16dp">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Gestión de Datos (CSV)"
+            android:textColor="@color/vivid_blue"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:textAllCaps="true"/>
+
+        <ImageView
+            android:id="@+id/btn_help_csv"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@android:drawable/ic_menu_info_details"
+            app:tint="@color/text_secondary"
+            android:contentDescription="Ayuda Formato CSV"
+            android:clickable="true"
+            android:focusable="true"
+            android:background="?attr/selectableItemBackgroundBorderless"/>
+    </LinearLayout>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_export_csv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Exportar Historial (CSV)"
+        android:textColor="@color/text_primary"
+        android:backgroundTint="@color/surface_card"
+        app:icon="@drawable/ic_history"
+        app:iconTint="@color/primary_accent"
+        app:strokeColor="@color/divider"
+        app:strokeWidth="1dp"
+        android:gravity="start|center_vertical"
+        android:layout_marginBottom="16dp"/>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_import_csv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Importar Historial (CSV)"
+        android:textColor="@color/text_primary"
+        android:backgroundTint="@color/surface_card"
+        app:icon="@drawable/ic_history"
+        app:iconTint="@color/primary_accent"
+        app:strokeColor="@color/divider"
+        app:strokeWidth="1dp"
+        android:gravity="start|center_vertical"
+        android:layout_marginBottom="16dp"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Importar agregará nuevas sesiones. Las existentes se omitirán para evitar duplicados."
+        android:textColor="@color/text_secondary"
+        android:textSize="12sp"
+        android:layout_marginBottom="32dp"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#33FFFFFF"
+        android:layout_marginBottom="32dp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Gestión de Datos - Peso Corporal"
+        android:textColor="@color/vivid_green"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        android:textAllCaps="true"
+        android:layout_marginBottom="16dp"/>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_export_weight_csv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Exportar Peso (CSV)"
+        android:textColor="@color/text_primary"
+        android:backgroundTint="@color/surface_card"
+        app:icon="@drawable/ic_chart"
+        app:iconTint="@color/vivid_green"
+        app:strokeColor="@color/divider"
+        app:strokeWidth="1dp"
+        android:gravity="start|center_vertical"
+        android:layout_marginBottom="16dp"/>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_import_weight_csv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Importar Peso (CSV)"
+        android:textColor="@color/text_primary"
+        android:backgroundTint="@color/surface_card"
+        app:icon="@drawable/ic_chart"
+        app:iconTint="@color/vivid_green"
+        app:strokeColor="@color/divider"
+        app:strokeWidth="1dp"
+        android:gravity="start|center_vertical"
+        android:layout_marginBottom="16dp"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#33FFFFFF"
+        android:layout_marginBottom="32dp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Rutina y Plan"
+        android:textColor="@color/vivid_purple"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        android:textAllCaps="true"
+        android:layout_marginBottom="16dp"/>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_change_split"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Cambiar / Editar Rutina"
+        android:textColor="@color/text_primary"
+        android:backgroundTint="@color/surface_card"
+        app:icon="@drawable/ic_edit"
+        app:iconTint="@color/vivid_purple"
+        app:strokeColor="@color/divider"
+        app:strokeWidth="1dp"
+        android:gravity="start|center_vertical"
+        android:layout_marginBottom="16dp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/theme_title"
+        android:textColor="@color/vivid_cyan"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        android:textAllCaps="true"
+        android:layout_marginBottom="8dp"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:baselineAligned="false"
+        android:layout_marginBottom="32dp">
+
+        <include
+            android:id="@+id/itemThemeDark"
+            layout="@layout/item_theme_selector"/>
+
+        <include
+            android:id="@+id/itemThemeLight"
+            layout="@layout/item_theme_selector"/>
+
+        <include
+            android:id="@+id/itemThemeAmoled"
+            layout="@layout/item_theme_selector"/>
+
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#33FFFFFF"
+        android:layout_marginBottom="32dp"/>
+
+    </LinearLayout>
+
+</androidx.core.widget.NestedScrollView>
+

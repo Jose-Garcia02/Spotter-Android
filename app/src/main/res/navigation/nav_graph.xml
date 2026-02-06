@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/navigation_home">
+
+    <fragment
+        android:id="@+id/navigation_home"
+        android:name="com.josegarcia.appgym.ui.home.HomeFragment"
+        android:label="@string/home_title"
+        tools:layout="@layout/fragment_home" />
+
+    <fragment
+        android:id="@+id/navigation_train"
+        android:name="com.josegarcia.appgym.ui.home.TrainFragment"
+        android:label="Entrenar"
+        tools:layout="@layout/fragment_train" />
+
+    <fragment
+        android:id="@+id/navigation_history"
+        android:name="com.josegarcia.appgym.ui.history.HistoryFragment"
+        android:label="@string/history_title"
+        tools:layout="@layout/fragment_history" />
+
+    <fragment
+        android:id="@+id/navigation_stats"
+        android:name="com.josegarcia.appgym.ui.stats.StatsFragment"
+        android:label="@string/stats_title"
+        tools:layout="@layout/fragment_stats" />
+
+    <fragment
+        android:id="@+id/bodyWeightFragment"
+        android:name="com.josegarcia.appgym.ui.weight_tracker.BodyWeightFragment"
+        android:label="Peso Corporal"
+        tools:layout="@layout/fragment_body_weight" />
+
+    <fragment
+        android:id="@+id/settingsFragment"
+        android:name="com.josegarcia.appgym.ui.SettingsFragment"
+        android:label="Ajustes"
+        tools:layout="@layout/fragment_settings" />
+</navigation>

@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="8dp"
+    app:cardBackgroundColor="@color/surface_dark"
+    app:cardCornerRadius="12dp"
+    app:strokeColor="@color/divider"
+    app:strokeWidth="1dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="12dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/tvExerciseName"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:text="Nombre del Ejercicio"
+                android:textColor="@color/text_primary"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="8dp"/>
+
+            <TextView
+                android:id="@+id/tvUnitToggle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/unit_kg"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:textColor="@color/primary_accent"
+                android:background="@drawable/bg_input_rounded"
+                android:paddingHorizontal="8dp"
+                android:paddingVertical="4dp"/>
+        </LinearLayout>
+
+        <!-- Headers -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="4dp">
+            <TextView android:layout_width="30dp" android:layout_height="wrap_content" android:text="#" android:textColor="@color/text_secondary" android:gravity="center" android:textSize="12sp"/>
+            <TextView android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:text="@string/prev_label" android:textColor="@color/text_secondary" android:gravity="center" android:textSize="12sp"/>
+            <TextView android:id="@+id/tvWeightHeader" android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:text="@string/header_kg" android:textColor="@color/text_secondary" android:gravity="center" android:textSize="12sp"/>
+            <TextView android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:text="@string/reps_label" android:textColor="@color/text_secondary" android:gravity="center" android:textSize="12sp"/>
+        </LinearLayout>
+
+        <!-- Container for dynamic sets -->
+        <LinearLayout
+            android:id="@+id/setsContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"/>
+
+        <Button
+            android:id="@+id/btnAddSet"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="+ Agregar Serie"
+            android:textColor="@color/primary_accent"
+            app:backgroundTint="@android:color/transparent"
+            style="@style/Widget.MaterialComponents.Button.TextButton"
+            android:layout_marginTop="4dp"/>
+
+    </LinearLayout>
+
+</com.google.android.material.card.MaterialCardView>

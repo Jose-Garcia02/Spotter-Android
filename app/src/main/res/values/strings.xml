@@ -1,0 +1,89 @@
+<resources>
+    <string name="app_name">Spotter</string>
+    <string name="stats_title">Progreso</string>
+    <string name="select_exercise">Selecciona un ejercicio:</string>
+    <string name="metric_weight">Carga</string>
+    <string name="metric_reps">Repeticiones</string>
+    <string name="stats_placeholder">Selecciona un ejercicio para ver datos</string>
+
+    <!-- Home Module -->
+    <string name="home_title">Elige tu rutina</string>
+    <string name="routine_upper_a">Upper A</string>
+    <string name="routine_upper_b">Upper B</string>
+    <string name="routine_lower_a">Lower A</string>
+    <string name="routine_lower_b">Lower B</string>
+    <string name="routine_free">Entrenamiento Libre</string>
+    <string name="add_exercise">Añadir Ejercicio</string>
+
+    <!-- History Module -->
+    <string name="history_title">Historial de Entrenamiento</string>
+    <string name="filter_all">Todo</string>
+    <string name="filter_week">Esta Semana</string>
+    <string name="history_empty">No hay entrenamientos registrados</string>
+
+    <!-- Dialogs -->
+    <string name="details_suffix"> - Detalles</string>
+    <string name="close">Cerrar</string>
+    <string name="no_details">No hay registros detallados para esta sesión.</string>
+
+    <!-- Tracker Module -->
+    <string name="tracker_title_prefix">Entrenando: </string>
+    <string name="tracker_title_format">Entrenando: %1$s</string>
+    <string name="finish_workout">Finalizar</string>
+    <string name="workout_saved">¡Entrenamiento guardado correctamente!</string>
+    <string name="prev_label">Previo</string>
+    <string name="reps_label">Reps</string>
+    <string name="unit_kg">KG</string>
+    <string name="unit_lbs">LBS</string>
+    <string name="unit_plates">PL</string>
+    <string name="header_kg">Kg</string>
+    <string name="header_lbs">Lbs</string>
+    <string name="header_plates">Placas</string>
+    <string name="series_label">Serie %1$d</string>
+    <string name="history_detail_set_format">   Set %1$d: %2$.1f%3$s x %4$d\n</string>
+    <string name="history_detail_exercise_format">\n• %1$s:\n</string>
+    <string name="cache_session_title">Sesión Pendiente</string>
+    <string name="cache_session_message">Tienes una sesión no finalizada de %1$s. ¿Deseas recuperarla?</string>
+    <string name="recover">Recuperar</string>
+    <string name="discard">Descartar</string>
+
+    <!-- Edit Routine and Configure Split -->
+    <string name="edit_routine_title">Editar: %1$s</string>
+    <string name="configure_title">Configurar %1$s</string>
+    <string name="save_final_routine">Guardar Rutina Final</string>
+    <string name="delete_exercise_title">Eliminar Ejercicio</string>
+    <string name="delete_exercise_message">¿Estás seguro de eliminar %1$s?</string>
+    <string name="delete">Eliminar</string>
+    <string name="cancel">Cancelar</string>
+    <string name="edit_routine_toast">Editar día: %1$s</string>
+    <string name="plan_activated_toast">Plan activado correctamente</string>
+
+    <!-- CSV Help Dialog -->
+    <string name="csv_help_title">Formato CSV Requerido</string>
+    <string name="csv_help_message">El formato de exportación e importación incluye la unidad:\n\n1. Historial de Entrenamientos:\nFecha, Ejercicio, Unidad, Día Rutina, Set 1 Peso, Set 1 Reps, Set 2 Peso...\n\nEjemplo:\n20/02/2024, Press Banca, KG, Pecho A, 100, 12, 100, 10, ...\n\nNota: La unidad (KG, LBS, PL) se aplica al ejercicio en esa sesión.\n\n2. Peso Corporal:\nTimestamp, Fecha Legible, Peso\nEj: 1708456000000, 20/02/2024, 75.5</string>
+    <string name="understood">Entendido</string>
+
+    <!-- Settings Messages -->
+    <string name="export_start">Exportación iniciada...</string>
+    <string name="export_history_success">Exportación de historial completada</string>
+    <string name="export_error">Error al crear archivo</string>
+    <string name="export_fail">Error al exportar: %1$s</string>
+    <string name="import_start">Importando...</string>
+    <string name="import_history_success">Importación de historial completada</string>
+    <string name="import_open_error">Error: No se pudo abrir el archivo</string>
+    <string name="import_fail">Error al importar: %1$s</string>
+    <string name="export_weight_start">Exportación de peso iniciada...</string>
+    <string name="export_weight_success">Exportación de peso completada</string>
+    <string name="import_weight_success">Importación de peso completada</string>
+
+    <!-- Theme -->
+    <string name="theme_title">Apariencia</string>
+    <string name="theme_system">Sistema</string>
+    <string name="theme_light">Claro</string>
+    <string name="theme_dark">Oscuro</string>
+    <string name="theme_amoled">Super AMOLED</string>
+    <string name="theme_beta_warning">El modo Claro está en beta.</string>
+
+    <string name="amoled_pure_black">#000000</string>
+    <string name="soft_white">#F5F5F7</string>
+</resources>

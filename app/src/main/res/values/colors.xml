@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+
+    <!-- Modern Light Palette -->
+    <color name="background_dark">#F9F9F9</color> <!-- Soft White -->
+    <color name="surface_dark">#FFFFFF</color>  <!-- Pure White Surface -->
+    <color name="surface_card">#FFFFFF</color> <!-- White Card -->
+    <color name="input_background">#F0F0F0</color>
+
+    <!-- Vibrant Accents for "Spotter" (Alive & Minimalist) - Balanced Intensity -->
+    <color name="vivid_blue">#2563EB</color>   <!-- Slightly darker blue for white bg -->
+    <color name="vivid_red">#DC2626</color>    <!-- Slightly darker red -->
+    <color name="vivid_green">#16A34A</color>  <!-- Slightly darker green -->
+    <color name="vivid_gold">#D97706</color>
+    <color name="vivid_yellow">#CA8A04</color>
+    <color name="vivid_purple">#9333EA</color>
+    <color name="vivid_cyan">#0891B2</color>
+
+    <color name="android_sky_blue">#3B82F6</color>
+    <color name="loading_bar_white">#E0E0E0</color>
+
+    <color name="date_background">@color/white</color>
+
+    <!-- Semantics -->
+    <color name="primary_accent">@color/vivid_blue</color>
+    <color name="secondary_accent">@color/vivid_red</color>
+
+    <!-- Text -->
+    <color name="text_primary">#000000</color> <!-- Pure Black -->
+    <color name="text_secondary">#424242</color> <!-- Dark Grey -->
+    <color name="text_hint">#757575</color>
+
+    <color name="divider">#E0E0E0</color>
+    <color name="success">@color/vivid_green</color>
+    <color name="error">@color/vivid_red</color>
+
+    <!-- Chart Series Colors (Vibrant Palette) -->
+    <color name="chart_color_1">@color/vivid_blue</color>
+    <color name="chart_color_2">@color/vivid_red</color>
+    <color name="chart_color_3">@color/vivid_green</color>
+    <color name="chart_color_4">@color/vivid_gold</color>
+    <color name="chart_color_5">@color/vivid_purple</color>
+    <color name="chart_color_6">@color/vivid_cyan</color>
+</resources>

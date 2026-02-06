@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+
+    <!-- Modern Fitness Dark Palette (MacroFactor Inspired) -->
+    <color name="background_dark">#050505</color> <!-- Deepest Black/Grey -->
+    <color name="surface_dark">#121212</color>  <!-- Material Dark Surface -->
+    <color name="surface_card">#1E1E20</color> <!-- Card Surface (Slightly lighter) -->
+    <color name="input_background">#1E1E20</color>
+
+    <!-- Vibrant Accents for "Spotter" (Alive & Minimalist) - Balanced Intensity -->
+    <color name="vivid_blue">#3B82F6</color>   <!-- Balanced Vivid Blue -->
+    <color name="vivid_red">#EF4444</color>    <!-- Balanced Vivid Red -->
+    <color name="vivid_green">#22C55E</color>  <!-- Balanced Vivid Green -->
+    <color name="vivid_gold">#F59E0B</color>   <!-- Balanced Vivid Gold -->
+    <color name="vivid_yellow">#EAB308</color> <!-- Added Yellow -->
+    <color name="vivid_purple">#A855F7</color> <!-- Balanced Vivid Purple -->
+    <color name="vivid_cyan">#06B6D4</color>   <!-- Balanced Vivid Cyan -->
+
+    <color name="android_sky_blue">#5E97F6</color> <!-- Refined Android Blue (Less Cyan, Less Intense) -->
+    <color name="loading_bar_white">#FFFFFF</color>
+
+    <color name="date_background">@color/white</color>
+
+    <!-- Semantics -->
+    <color name="primary_accent">@color/vivid_blue</color>
+    <color name="secondary_accent">@color/vivid_red</color> <!-- Red for closing/actions -->
+
+    <!-- Text -->
+    <color name="text_primary">#FFFFFF</color>
+    <color name="text_secondary">#B0B0B0</color> <!-- Light Grey for readability -->
+    <color name="text_hint">#616161</color>
+
+    <color name="divider">#2C2C2E</color>
+    <color name="success">@color/vivid_green</color>
+    <color name="error">@color/vivid_red</color>
+
+    <!-- Chart Series Colors (Vibrant Palette) -->
+    <color name="chart_color_1">@color/vivid_blue</color>
+    <color name="chart_color_2">@color/vivid_red</color>
+    <color name="chart_color_3">@color/vivid_green</color>
+    <color name="chart_color_4">@color/vivid_gold</color>
+    <color name="chart_color_5">@color/vivid_purple</color>
+    <color name="chart_color_6">@color/vivid_cyan</color>
+</resources>
