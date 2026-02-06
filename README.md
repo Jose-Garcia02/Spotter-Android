@@ -62,9 +62,13 @@ El proyecto sigue una arquitectura sólida basada en las mejores prácticas de A
 
 ## 📱 Capturas de Pantalla
 
-| Inicio / Heatmap | Rutina / Entrenar | Gráficas | Peso Corporal |
+| <img src="screenshots/home.jpeg" width="200"/> | <img src="screenshots/routine.jpeg" width="200"/> | <img src="screenshots/history.jpeg" width="200"/> | <img src="screenshots/progress.jpeg" width="200"/> |
 |:---:|:---:|:---:|:---:|
-| *(Inserta aquí captura)* | *(Inserta aquí captura)* | *(Inserta aquí captura)* | *(Inserta aquí captura)* |
+| **Inicio / Dashboard** | **Rutina / Entrenar** | **Historial** | **Progreso** |
+
+| <img src="screenshots/settings.jpeg" width="200"/> |
+|:---:|
+| **Ajustes** |
 
 ## 🚀 Instalación y Configuración
 
@@ -72,7 +76,7 @@ Para ejecutar este proyecto localmente:
 
 1.  **Clonar el repositorio**:
     ```bash
-    git clone https://github.com/tu-usuario/Spotter.git
+    git clone https://github.com/Jose-Garcia02/Spotter-Android.git
     ```
 2.  **Abrir en Android Studio**:
     *   Abre Android Studio (Ladybug o superior recomendado).
