@@ -35,8 +35,9 @@ public class SettingsFragment extends Fragment {
 
         // Observers
         viewModel.getStatusMessage().observe(this, message -> {
-            if (message != null) {
+            if (message != null && !message.isEmpty()) {
                 Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
+                viewModel.clearStatusMessage(); // Limpiar mensaje después de mostrarlo
             }
         });
 

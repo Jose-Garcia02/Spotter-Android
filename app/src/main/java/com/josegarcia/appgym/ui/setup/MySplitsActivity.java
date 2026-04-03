@@ -23,49 +23,30 @@ public class MySplitsActivity extends AppCompatActivity {
 
     private SplitAdapter adapter;
 
+    private RecyclerView recyclerSplits;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my_splits); // NEW LAYOUT
 
-        // Title is already "Mis Planes" in XML now, but keeping reference logic is fine
+        // ...existing code...
 
-        // Setup Create Button (Static at bottom)
-        Button btnCreate = findViewById(R.id.btnCreateNewPlan);
-        btnCreate.setOnClickListener(v -> {
-            Intent intent = new Intent(this, SetupSplitActivity.class);
-            intent.putExtra("IS_NEW_ROUTINE", true);
-            startActivity(intent);
-        });
+        recyclerSplits = findViewById(R.id.recyclerSplits);
+        recyclerSplits.setLayoutManager(new LinearLayoutManager(this));
 
-        // Apps Window Insets
-        androidx.core.view.ViewCompat.setOnApplyWindowInsetsListener(findViewById(android.R.id.content), (v, windowInsets) -> {
-            androidx.core.graphics.Insets insets = windowInsets.getInsets(androidx.core.view.WindowInsetsCompat.Type.systemBars());
-            v.setPadding(0, insets.top, 0, 0);
-            // Also adjust button margin if needed? ConstraintLayout handles bottom constraint to parent.
-            // But if navbar is transparent Edge-to-Edge, padding 0 might be problematic.
-            // Let's apply bottom padding to the root view so button goes up.
-            v.setPadding(0, insets.top, 0, insets.bottom);
-            return windowInsets;
-        });
+        // ...existing code...
 
-        RecyclerView recyclerView = findViewById(R.id.recyclerSplits);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        loadSplits(recyclerSplits);
+    }
 
-        // Use custom adapter or extend functionality of SplitAdapter?
-        // SplitAdapter currently only has onClick.
-        // Micro-module 2.5 requirements: "Botón 'Activar' para cambiar entre Upper/Lower y PPL sin borrar el historial."
-        // And "Modo Edición: Al abrir... reutilizar la interfaz del Módulo 2.3".
-
-        // So clicking a split in "My Routines" -> opens ConfigureSplitActivity (which allows Editing and Activating).
-        // ConfigureSplitActivity already has "Guardar Rutina Final" (which activates).
-        // We probably want to change the text of that button if we are just editing vs activating?
-        // Or keep it simple: Clicking item opens ConfigureSplitActivity.
-        // Inside ConfigureSplitActivity, user can edit. And the "Activate" button can be "Guardar y Activar" or just "Activar".
-
-        // Let's reuse SplitAdapter for now, clicking an item goes to Configure.
-
-        loadSplits(recyclerView);
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // Recargar splits cuando volvemos de ConfigureSplitActivity
+        if (recyclerSplits != null) {
+            loadSplits(recyclerSplits);
+        }
     }
 
     private void loadSplits(RecyclerView recyclerView) {

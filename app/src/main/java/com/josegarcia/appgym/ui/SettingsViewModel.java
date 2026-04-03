@@ -24,6 +24,10 @@ public class SettingsViewModel extends ViewModel {
         return statusMessage;
     }
 
+    public void clearStatusMessage() {
+        statusMessage.setValue(null);
+    }
+
 
     public void exportHistory(Context context, Uri uri) {
         isLoading.setValue(true);
