@@ -166,21 +166,14 @@ public abstract class AppDatabase extends RoomDatabase {
                                 @Override
                                 public void onCreate(@NonNull SupportSQLiteDatabase db) {
                                     super.onCreate(db);
-                                    // Seed will be done in onOpen for first creation
                                 }
 
                                 @Override
                                 public void onOpen(@NonNull SupportSQLiteDatabase db) {
                                     super.onOpen(db);
-                                    // Seed + cleanup on every open (async, safe)
-                                    databaseWriteExecutor.execute(() -> {
-                                        try {
-                                            seedIfEmpty();
-                                            cleanupAndValidate();
-                                        } catch (Exception e) {
-                                            android.util.Log.e("AppDatabase", "Error in onOpen", e);
-                                        }
-                                    });
+                                    // Seed synchronously to ensure data is ready
+                                    seedIfEmpty();
+                                    cleanupAndValidate();
                                 }
 
                                 private void seedIfEmpty() {
@@ -189,8 +182,7 @@ public abstract class AppDatabase extends RoomDatabase {
                                         List<Split> existingSplits = splitDao.getAllSplits();
 
                                         if (!existingSplits.isEmpty()) {
-                                            markSeedComplete();
-                                            return;
+                                            return; // Already has data
                                         }
 
                                         // Seed exercise catalog
@@ -243,17 +235,11 @@ public abstract class AppDatabase extends RoomDatabase {
                                         for(int i=0; i<fbRoutines.size(); i++) {
                                             populateExercisesSync(reDao, fbIds.get(i).intValue(), fbRoutines.get(i).name);
                                         }
-
-                                        // Mark seed as complete
-                                        markSeedComplete();
                                     } catch (Exception e) {
                                         android.util.Log.e("AppDatabase", "Error seeding data", e);
                                     }
                                 }
 
-                                private void markSeedComplete() {
-                                    // No-op here, marking will happen in MySplitsActivity after successful load
-                                }
 
                                 private void cleanupAndValidate() {
                                     try {

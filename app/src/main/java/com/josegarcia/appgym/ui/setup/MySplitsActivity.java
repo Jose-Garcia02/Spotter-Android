@@ -55,24 +55,11 @@ public class MySplitsActivity extends AppCompatActivity {
     }
 
     private void loadSplits(RecyclerView recyclerView) {
-        // Cargar directamente de la BD con reintentos en background
         AppDatabase.databaseWriteExecutor.execute(() -> {
-            // Retry con espera para que el seed complete
-            List<Split> splits = null;
-            for (int i = 0; i < 20; i++) {
-                splits = AppDatabase.getDatabase(this).splitDao().getUserSplits();
-                if (!splits.isEmpty()) {
-                    break;
-                }
-                try {
-                    Thread.sleep(500);
-                } catch (InterruptedException e) {
-                    Thread.currentThread().interrupt();
-                    break;
-                }
-            }
+            // BD ya tiene datos listos por seed en onOpen()
+            List<Split> splits = AppDatabase.getDatabase(this).splitDao().getUserSplits();
 
-            final List<Split> finalSplits = splits != null ? splits : new ArrayList<>();
+            final List<Split> finalSplits = splits;
             runOnUiThread(() -> {
                 adapter = new SplitAdapter(finalSplits,
                     // On Item Click
