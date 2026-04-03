@@ -37,6 +37,10 @@ public class MySplitsActivity extends AppCompatActivity {
 
         // ...existing code...
 
+        // Inicializar adapter vacío para evitar pantalla negra
+        adapter = new SplitAdapter(new java.util.ArrayList<>(), split -> {}, split -> {});
+        recyclerSplits.setAdapter(adapter);
+
         loadSplits(recyclerSplits);
     }
 

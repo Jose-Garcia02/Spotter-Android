@@ -14,6 +14,7 @@ import androidx.fragment.app.Fragment;
 
 import com.josegarcia.appgym.R;
 import com.josegarcia.appgym.ui.setup.MySplitsActivity;
+import com.josegarcia.appgym.ui.exercise_management.ExerciseManagementFragment;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -99,7 +100,8 @@ public class SettingsFragment extends Fragment {
 
         // New Button for Exercise Management
         view.findViewById(R.id.btn_manage_exercises).setOnClickListener(v -> {
-            androidx.navigation.Navigation.findNavController(v).navigate(R.id.exerciseManagementFragment);
+            ExerciseManagementFragment dialog = new ExerciseManagementFragment();
+            dialog.show(getParentFragmentManager(), "exercise_management");
         });
 
         view.findViewById(R.id.btn_help_csv).setOnClickListener(v -> showHelpDialog());

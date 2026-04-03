@@ -8,7 +8,7 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.ArrayAdapter;
-import androidx.fragment.app.Fragment;
+import androidx.fragment.app.DialogFragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -17,7 +17,7 @@ import com.google.android.material.button.MaterialButton;
 import com.josegarcia.appgym.R;
 import com.josegarcia.appgym.data.entities.ExerciseCatalog;
 
-public class ExerciseManagementFragment extends Fragment implements ExerciseManagementAdapter.OnExerciseListener {
+public class ExerciseManagementFragment extends DialogFragment implements ExerciseManagementAdapter.OnExerciseListener {
     private ExerciseManagementViewModel viewModel;
     private ExerciseManagementAdapter adapter;
     private RecyclerView rvExercises;
@@ -46,6 +46,12 @@ public class ExerciseManagementFragment extends Fragment implements ExerciseMana
         btnAddExercise.setOnClickListener(v -> showCreateDialog());
 
         return view;
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setStyle(DialogFragment.STYLE_NORMAL, R.style.Theme_AppGym);
     }
 
     @Override
