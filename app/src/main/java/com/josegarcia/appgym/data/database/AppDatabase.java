@@ -166,47 +166,40 @@ public abstract class AppDatabase extends RoomDatabase {
                                 @Override
                                 public void onCreate(@NonNull SupportSQLiteDatabase db) {
                                     super.onCreate(db);
-                                    // Seed in background but wait for completion
-                                    java.util.concurrent.CountDownLatch latch = new java.util.concurrent.CountDownLatch(1);
-                                    databaseWriteExecutor.execute(() -> {
-                                        try {
-                                            seedInitialDataSync();
-                                        } finally {
-                                            latch.countDown();
-                                        }
-                                    });
-                                    try {
-                                        latch.await(); // Wait for seed to complete
-                                    } catch (InterruptedException e) {
-                                        Thread.currentThread().interrupt();
-                                    }
+                                    // Seed will be done in onOpen for first creation
                                 }
 
                                 @Override
                                 public void onOpen(@NonNull SupportSQLiteDatabase db) {
                                     super.onOpen(db);
-                                    // Cleanup logic on every open
-                                    databaseWriteExecutor.execute(this::cleanupAndValidate);
+                                    // Seed + cleanup on every open (async, safe)
+                                    databaseWriteExecutor.execute(() -> {
+                                        try {
+                                            seedIfEmpty();
+                                            cleanupAndValidate();
+                                        } catch (Exception e) {
+                                            android.util.Log.e("AppDatabase", "Error in onOpen", e);
+                                        }
+                                    });
                                 }
 
-                                private void seedInitialDataSync() {
+                                private void seedIfEmpty() {
                                     try {
                                         SplitDao splitDao = INSTANCE.splitDao();
-                                        ExerciseCatalogDao catalogDao = INSTANCE.exerciseCatalogDao();
-
-                                        // Check if already seeded
                                         List<Split> existingSplits = splitDao.getAllSplits();
+
                                         if (!existingSplits.isEmpty()) {
-                                            return; // Already seeded
+                                            return; // Already has data
                                         }
 
                                         // Seed exercise catalog
+                                        ExerciseCatalogDao catalogDao = INSTANCE.exerciseCatalogDao();
                                         if (catalogDao.getCount() == 0) {
                                             List<ExerciseCatalog> catalog = getExerciseCatalogSeeds();
                                             catalogDao.insertAll(catalog);
                                         }
 
-                                        // Seed classic splits using DAOs (safe and reliable)
+                                        // Seed classic splits
                                         RoutineDao rDao = INSTANCE.routineDao();
                                         RoutineExerciseDao reDao = INSTANCE.routineExerciseDao();
 
@@ -250,7 +243,7 @@ public abstract class AppDatabase extends RoomDatabase {
                                             populateExercisesSync(reDao, fbIds.get(i).intValue(), fbRoutines.get(i).name);
                                         }
                                     } catch (Exception e) {
-                                        android.util.Log.e("AppDatabase", "Error seeding initial data", e);
+                                        android.util.Log.e("AppDatabase", "Error seeding data", e);
                                     }
                                 }
 
@@ -259,12 +252,12 @@ public abstract class AppDatabase extends RoomDatabase {
                                         SplitDao splitDao = INSTANCE.splitDao();
                                         List<Split> currentSplits = splitDao.getAllSplits();
 
-                                        // Cleanup migration artifact "Default Split" if it's the only one or invalid
+                                        // Cleanup migration artifact "Default Split"
                                         if (currentSplits.size() == 1 && "Default Split".equals(currentSplits.get(0).name)) {
                                             splitDao.delete(currentSplits.get(0));
                                         }
 
-                                        // RECOVERY: Ensure the ACTIVE split is treated as a User split (not a template)
+                                        // RECOVERY: Ensure the ACTIVE split is treated as a User split
                                         INSTANCE.getOpenHelper().getWritableDatabase()
                                             .execSQL("UPDATE splits SET isTemplate = 0 WHERE isActive = 1");
                                     } catch (Exception e) {

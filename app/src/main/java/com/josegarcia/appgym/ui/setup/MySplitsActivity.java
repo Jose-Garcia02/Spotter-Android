@@ -55,10 +55,22 @@ public class MySplitsActivity extends AppCompatActivity {
 
     private void loadSplits(RecyclerView recyclerView) {
         AppDatabase.databaseWriteExecutor.execute(() -> {
-            // Updated to fetch only USER splits (not templates)
+            // Retry logic: si la BD aún no tiene datos, esperar un poco
             List<Split> splits = AppDatabase.getDatabase(this).splitDao().getUserSplits();
+
+            if (splits.isEmpty()) {
+                // Si está vacío, esperar un poco para que el seed termine
+                try {
+                    Thread.sleep(500);
+                    splits = AppDatabase.getDatabase(this).splitDao().getUserSplits();
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                }
+            }
+
+            final List<Split> finalSplits = splits;
             runOnUiThread(() -> {
-                adapter = new SplitAdapter(splits,
+                adapter = new SplitAdapter(finalSplits,
                     // On Item Click
                     split -> {
                         Intent intent = new Intent(this, ConfigureSplitActivity.class);
