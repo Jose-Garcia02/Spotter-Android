@@ -166,87 +166,110 @@ public abstract class AppDatabase extends RoomDatabase {
                                 @Override
                                 public void onCreate(@NonNull SupportSQLiteDatabase db) {
                                     super.onCreate(db);
-                                    // Seed synchronously on first creation to avoid race conditions
-                                    seedInitialDataSync(db);
+                                    // Seed in background but wait for completion
+                                    java.util.concurrent.CountDownLatch latch = new java.util.concurrent.CountDownLatch(1);
+                                    databaseWriteExecutor.execute(() -> {
+                                        try {
+                                            seedInitialDataSync();
+                                        } finally {
+                                            latch.countDown();
+                                        }
+                                    });
+                                    try {
+                                        latch.await(); // Wait for seed to complete
+                                    } catch (InterruptedException e) {
+                                        Thread.currentThread().interrupt();
+                                    }
                                 }
 
                                 @Override
                                 public void onOpen(@NonNull SupportSQLiteDatabase db) {
                                     super.onOpen(db);
-                                    // Cleanup logic on every open (async is fine here)
+                                    // Cleanup logic on every open
                                     databaseWriteExecutor.execute(this::cleanupAndValidate);
                                 }
 
-                                private void seedInitialDataSync(@NonNull SupportSQLiteDatabase db) {
-                                    // Check if splits table is empty
-                                    android.database.Cursor cursor = db.query("SELECT COUNT(*) FROM splits");
-                                    cursor.moveToFirst();
-                                    int count = cursor.getInt(0);
-                                    cursor.close();
+                                private void seedInitialDataSync() {
+                                    try {
+                                        SplitDao splitDao = INSTANCE.splitDao();
+                                        ExerciseCatalogDao catalogDao = INSTANCE.exerciseCatalogDao();
 
-                                    if (count == 0) {
-                                        // Insert exercise catalog first
-                                        List<ExerciseCatalog> catalog = getExerciseCatalogSeeds();
-                                        for (ExerciseCatalog ex : catalog) {
-                                            db.execSQL("INSERT INTO exercise_catalog (name, defaultUnit, muscleTag, isActive, createdAt, updatedAt) VALUES (?, ?, ?, ?, ?, ?)",
-                                                new Object[]{ex.name, ex.defaultUnit, ex.muscleTag, 1, System.currentTimeMillis(), System.currentTimeMillis()});
+                                        // Check if already seeded
+                                        List<Split> existingSplits = splitDao.getAllSplits();
+                                        if (!existingSplits.isEmpty()) {
+                                            return; // Already seeded
                                         }
 
-                                        // Insert splits and routines synchronously
-                                        insertSplitSync(db, "Upper / Lower", "Frecuencia 4 días", "Classic", InitialData.getUpperLowerRoutines(-1));
-                                        insertSplitSync(db, "Push / Pull / Legs", "Frecuencia 6 días", "Classic", InitialData.getPPLRoutines(-1));
-                                        insertSplitSync(db, "Arnold Split", "Pecho/Espalda + Hombro/Brazo + Pierna", "Classic", InitialData.getArnoldRoutines(-1));
-                                        insertSplitSync(db, "Full Body", "Frecuencia 3 días", "Classic", InitialData.getFullBodyRoutines(-1));
-                                    }
-                                }
-
-                                private void insertSplitSync(@NonNull SupportSQLiteDatabase db, String name, String desc, String type, List<Routine> routines) {
-                                    // Insert split
-                                    android.content.ContentValues splitValues = new android.content.ContentValues();
-                                    splitValues.put("name", name);
-                                    splitValues.put("description", desc);
-                                    splitValues.put("isActive", 0);
-                                    splitValues.put("type", type);
-                                    splitValues.put("isTemplate", 1);
-                                    long splitId = db.insert("splits", android.database.sqlite.SQLiteDatabase.CONFLICT_NONE, splitValues);
-
-                                    // Insert routines
-                                    for (int i = 0; i < routines.size(); i++) {
-                                        Routine r = routines.get(i);
-                                        android.content.ContentValues routineValues = new android.content.ContentValues();
-                                        routineValues.put("splitId", splitId);
-                                        routineValues.put("name", r.name);
-                                        routineValues.put("colorResId", r.colorResId);
-                                        routineValues.put("isSystem", r.isSystem ? 1 : 0);
-                                        routineValues.put("orderIndex", i + 1);
-                                        long routineId = db.insert("routines", android.database.sqlite.SQLiteDatabase.CONFLICT_NONE, routineValues);
-
-                                        // Insert exercises for this routine
-                                        String[] exercises = InitialData.getExercisesForRoutine(r.name);
-                                        for (int j = 0; j < exercises.length; j++) {
-                                            android.content.ContentValues exerciseValues = new android.content.ContentValues();
-                                            exerciseValues.put("routineId", routineId);
-                                            exerciseValues.put("exerciseName", exercises[j]);
-                                            exerciseValues.put("order", j + 1);
-                                            exerciseValues.put("targetSets", 3);
-                                            exerciseValues.put("targetUnit", "KG");
-                                            db.insert("routine_exercises", android.database.sqlite.SQLiteDatabase.CONFLICT_NONE, exerciseValues);
+                                        // Seed exercise catalog
+                                        if (catalogDao.getCount() == 0) {
+                                            List<ExerciseCatalog> catalog = getExerciseCatalogSeeds();
+                                            catalogDao.insertAll(catalog);
                                         }
+
+                                        // Seed classic splits using DAOs (safe and reliable)
+                                        RoutineDao rDao = INSTANCE.routineDao();
+                                        RoutineExerciseDao reDao = INSTANCE.routineExerciseDao();
+
+                                        // Split 1: Upper/Lower
+                                        Split s1 = new Split("Upper / Lower", "Frecuencia 4 días", false, "Classic");
+                                        s1.isTemplate = true;
+                                        long ulId = splitDao.insert(s1);
+                                        List<Routine> ulRoutines = InitialData.getUpperLowerRoutines((int)ulId);
+                                        List<Long> ulRoutineIds = rDao.insertAll(ulRoutines);
+                                        for(int i=0; i<ulRoutines.size(); i++) {
+                                            populateExercisesSync(reDao, ulRoutineIds.get(i).intValue(), ulRoutines.get(i).name);
+                                        }
+
+                                        // Split 2: PPL
+                                        Split s2 = new Split("Push / Pull / Legs", "Frecuencia 6 días", false, "Classic");
+                                        s2.isTemplate = true;
+                                        long pplId = splitDao.insert(s2);
+                                        List<Routine> pplRoutines = InitialData.getPPLRoutines((int)pplId);
+                                        List<Long> pplIds = rDao.insertAll(pplRoutines);
+                                        for(int i=0; i<pplRoutines.size(); i++) {
+                                            populateExercisesSync(reDao, pplIds.get(i).intValue(), pplRoutines.get(i).name);
+                                        }
+
+                                        // Split 3: Arnold
+                                        Split s3 = new Split("Arnold Split", "Pecho/Espalda + Hombro/Brazo + Pierna", false, "Classic");
+                                        s3.isTemplate = true;
+                                        long arnoldId = splitDao.insert(s3);
+                                        List<Routine> arnoldRoutines = InitialData.getArnoldRoutines((int)arnoldId);
+                                        List<Long> arnoldIds = rDao.insertAll(arnoldRoutines);
+                                        for(int i=0; i<arnoldRoutines.size(); i++) {
+                                            populateExercisesSync(reDao, arnoldIds.get(i).intValue(), arnoldRoutines.get(i).name);
+                                        }
+
+                                        // Split 4: Full Body
+                                        Split s4 = new Split("Full Body", "Frecuencia 3 días", false, "Classic");
+                                        s4.isTemplate = true;
+                                        long fbId = splitDao.insert(s4);
+                                        List<Routine> fbRoutines = InitialData.getFullBodyRoutines((int)fbId);
+                                        List<Long> fbIds = rDao.insertAll(fbRoutines);
+                                        for(int i=0; i<fbRoutines.size(); i++) {
+                                            populateExercisesSync(reDao, fbIds.get(i).intValue(), fbRoutines.get(i).name);
+                                        }
+                                    } catch (Exception e) {
+                                        android.util.Log.e("AppDatabase", "Error seeding initial data", e);
                                     }
                                 }
 
                                 private void cleanupAndValidate() {
-                                    SplitDao splitDao = INSTANCE.splitDao();
-                                    List<Split> currentSplits = splitDao.getAllSplits();
+                                    try {
+                                        SplitDao splitDao = INSTANCE.splitDao();
+                                        List<Split> currentSplits = splitDao.getAllSplits();
 
-                                    // Cleanup migration artifact "Default Split" if it's the only one or invalid
-                                    if (currentSplits.size() == 1 && "Default Split".equals(currentSplits.get(0).name)) {
-                                        splitDao.delete(currentSplits.get(0));
+                                        // Cleanup migration artifact "Default Split" if it's the only one or invalid
+                                        if (currentSplits.size() == 1 && "Default Split".equals(currentSplits.get(0).name)) {
+                                            splitDao.delete(currentSplits.get(0));
+                                        }
+
+                                        // RECOVERY: Ensure the ACTIVE split is treated as a User split (not a template)
+                                        INSTANCE.getOpenHelper().getWritableDatabase()
+                                            .execSQL("UPDATE splits SET isTemplate = 0 WHERE isActive = 1");
+                                    } catch (Exception e) {
+                                        android.util.Log.e("AppDatabase", "Error in cleanup", e);
                                     }
-
-                                    // RECOVERY: Ensure the ACTIVE split is treated as a User split (not a template)
-                                    INSTANCE.getOpenHelper().getWritableDatabase()
-                                        .execSQL("UPDATE splits SET isTemplate = 0 WHERE isActive = 1");
                                 }
                             })
                             .build();
@@ -256,6 +279,18 @@ public abstract class AppDatabase extends RoomDatabase {
         return INSTANCE;
     }
 
+    private static void populateExercisesSync(RoutineExerciseDao dao, int routineId, String routineName) {
+        List<RoutineExercise> list = new ArrayList<>();
+        int order = 1;
+
+        String[] exercises = InitialData.getExercisesForRoutine(routineName);
+        for (String ex : exercises) {
+            list.add(new RoutineExercise(routineId, ex, order++, 3, "KG"));
+        }
+        if (!list.isEmpty()) {
+            dao.insertAll(list);
+        }
+    }
 
     private static List<ExerciseCatalog> getExerciseCatalogSeeds() {
         List<ExerciseCatalog> exercises = new ArrayList<>();
