@@ -160,6 +160,20 @@
         android:gravity="start|center_vertical"
         android:layout_marginBottom="16dp"/>
 
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_manage_exercises"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Gestionar Ejercicios"
+        android:textColor="@color/text_primary"
+        android:backgroundTint="@color/surface_card"
+        app:icon="@drawable/ic_edit"
+        app:iconTint="@color/vivid_purple"
+        app:strokeColor="@color/divider"
+        app:strokeWidth="1dp"
+        android:gravity="start|center_vertical"
+        android:layout_marginBottom="32dp"/>
+
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

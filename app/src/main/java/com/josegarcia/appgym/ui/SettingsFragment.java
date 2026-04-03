@@ -96,6 +96,11 @@ public class SettingsFragment extends Fragment {
             startActivity(intent);
         });
 
+        // New Button for Exercise Management
+        view.findViewById(R.id.btn_manage_exercises).setOnClickListener(v -> {
+            androidx.navigation.Navigation.findNavController(v).navigate(R.id.exerciseManagementFragment);
+        });
+
         view.findViewById(R.id.btn_help_csv).setOnClickListener(v -> showHelpDialog());
 
         // Theme Handling
