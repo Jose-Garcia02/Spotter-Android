@@ -189,7 +189,8 @@ public abstract class AppDatabase extends RoomDatabase {
                                         List<Split> existingSplits = splitDao.getAllSplits();
 
                                         if (!existingSplits.isEmpty()) {
-                                            return; // Already has data
+                                            markSeedComplete();
+                                            return;
                                         }
 
                                         // Seed exercise catalog
@@ -242,9 +243,16 @@ public abstract class AppDatabase extends RoomDatabase {
                                         for(int i=0; i<fbRoutines.size(); i++) {
                                             populateExercisesSync(reDao, fbIds.get(i).intValue(), fbRoutines.get(i).name);
                                         }
+
+                                        // Mark seed as complete
+                                        markSeedComplete();
                                     } catch (Exception e) {
                                         android.util.Log.e("AppDatabase", "Error seeding data", e);
                                     }
+                                }
+
+                                private void markSeedComplete() {
+                                    // No-op here, marking will happen in MySplitsActivity after successful load
                                 }
 
                                 private void cleanupAndValidate() {

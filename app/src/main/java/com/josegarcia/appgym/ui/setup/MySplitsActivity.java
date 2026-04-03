@@ -55,20 +55,31 @@ public class MySplitsActivity extends AppCompatActivity {
 
     private void loadSplits(RecyclerView recyclerView) {
         AppDatabase.databaseWriteExecutor.execute(() -> {
-            // Retry logic: esperar y reintentar si la BD aún no tiene datos (first load)
+            // Aggressive retry: esperar hasta que haya datos o timeout
             List<Split> splits = AppDatabase.getDatabase(this).splitDao().getUserSplits();
 
             int retries = 0;
-            int maxRetries = 10; // Intentar hasta 5 segundos
+            int maxRetries = 20; // Intentar hasta 10 segundos
 
+            // Si está vacío, reintentar agresivamente
             while (splits.isEmpty() && retries < maxRetries) {
                 try {
-                    Thread.sleep(500); // Esperar 500ms antes de reintentar
+                    Thread.sleep(500); // Esperar 500ms
                     splits = AppDatabase.getDatabase(this).splitDao().getUserSplits();
                     retries++;
                 } catch (InterruptedException e) {
                     Thread.currentThread().interrupt();
                     break;
+                }
+            }
+
+            // Si sigue vacío después de reintentos, forzar nuevo acceso a BD
+            if (splits.isEmpty()) {
+                try {
+                    Thread.sleep(1000);
+                    splits = AppDatabase.getDatabase(this).splitDao().getUserSplits();
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
                 }
             }
 
