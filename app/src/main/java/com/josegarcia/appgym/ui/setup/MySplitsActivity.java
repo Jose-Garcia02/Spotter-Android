@@ -17,6 +17,7 @@ import com.josegarcia.appgym.R;
 import com.josegarcia.appgym.data.database.AppDatabase;
 import com.josegarcia.appgym.data.entities.Split;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class MySplitsActivity extends AppCompatActivity {
@@ -54,36 +55,24 @@ public class MySplitsActivity extends AppCompatActivity {
     }
 
     private void loadSplits(RecyclerView recyclerView) {
+        // Cargar directamente de la BD con reintentos en background
         AppDatabase.databaseWriteExecutor.execute(() -> {
-            // Aggressive retry: esperar hasta que haya datos o timeout
-            List<Split> splits = AppDatabase.getDatabase(this).splitDao().getUserSplits();
-
-            int retries = 0;
-            int maxRetries = 20; // Intentar hasta 10 segundos
-
-            // Si está vacío, reintentar agresivamente
-            while (splits.isEmpty() && retries < maxRetries) {
+            // Retry con espera para que el seed complete
+            List<Split> splits = null;
+            for (int i = 0; i < 20; i++) {
+                splits = AppDatabase.getDatabase(this).splitDao().getUserSplits();
+                if (!splits.isEmpty()) {
+                    break;
+                }
                 try {
-                    Thread.sleep(500); // Esperar 500ms
-                    splits = AppDatabase.getDatabase(this).splitDao().getUserSplits();
-                    retries++;
+                    Thread.sleep(500);
                 } catch (InterruptedException e) {
                     Thread.currentThread().interrupt();
                     break;
                 }
             }
 
-            // Si sigue vacío después de reintentos, forzar nuevo acceso a BD
-            if (splits.isEmpty()) {
-                try {
-                    Thread.sleep(1000);
-                    splits = AppDatabase.getDatabase(this).splitDao().getUserSplits();
-                } catch (InterruptedException e) {
-                    Thread.currentThread().interrupt();
-                }
-            }
-
-            final List<Split> finalSplits = splits;
+            final List<Split> finalSplits = splits != null ? splits : new ArrayList<>();
             runOnUiThread(() -> {
                 adapter = new SplitAdapter(finalSplits,
                     // On Item Click
