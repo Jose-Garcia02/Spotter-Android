@@ -67,13 +67,15 @@ public class ConfigureSplitActivity extends AppCompatActivity implements DayEdit
                 finish();
             }
         } else {
-            // Load routines for this split from DB
-            AppDatabase.getDatabase(this).routineDao().getRoutinesForSplit(splitId)
-                    .observe(this, routines -> {
-                        if (routines != null && !routines.isEmpty()) {
-                            setupPager(routines);
-                        }
-                    });
+            // Load routines for this split from DB - Single shot load
+            AppDatabase.databaseWriteExecutor.execute(() -> {
+                List<Routine> routines = AppDatabase.getDatabase(this).routineDao().getRoutinesForSplitSync(splitId);
+                runOnUiThread(() -> {
+                    if (routines != null && !routines.isEmpty()) {
+                        setupPager(routines);
+                    }
+                });
+            });
         }
 
         Button btnActivate = findViewById(R.id.btnActivateSplit);

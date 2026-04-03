@@ -164,80 +164,90 @@ public abstract class AppDatabase extends RoomDatabase {
                             .addMigrations(MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6, MIGRATION_6_7, MIGRATION_7_8, MIGRATION_8_9, MIGRATION_9_10)
                             .addCallback(new Callback() {
                                 @Override
+                                public void onCreate(@NonNull SupportSQLiteDatabase db) {
+                                    super.onCreate(db);
+                                    // Seed only on fresh install
+                                    databaseWriteExecutor.execute(this::seedInitialData);
+                                }
+
+                                @Override
                                 public void onOpen(@NonNull SupportSQLiteDatabase db) {
                                     super.onOpen(db);
-                                    // Prepopulate logic
-                                    databaseWriteExecutor.execute(() -> {
-                                        SplitDao splitDao = INSTANCE.splitDao();
-                                        RoutineDao rDao = INSTANCE.routineDao();
-                                        RoutineExerciseDao reDao = INSTANCE.routineExerciseDao();
-                                        ExerciseCatalogDao catalogDao = INSTANCE.exerciseCatalogDao();
+                                    // Cleanup logic on every open
+                                    databaseWriteExecutor.execute(this::cleanupAndValidate);
+                                }
 
-                                        List<Split> currentSplits = splitDao.getAllSplits();
+                                private void seedInitialData() {
+                                    SplitDao splitDao = INSTANCE.splitDao();
+                                    RoutineDao rDao = INSTANCE.routineDao();
+                                    RoutineExerciseDao reDao = INSTANCE.routineExerciseDao();
+                                    ExerciseCatalogDao catalogDao = INSTANCE.exerciseCatalogDao();
 
-                                        // Cleanup migration artifact "Default Split" if it's the only one or invalid
-                                        if (currentSplits.size() == 1 && "Default Split".equals(currentSplits.get(0).name)) {
-                                            splitDao.delete(currentSplits.get(0));
-                                            currentSplits.clear();
+                                    // Seed exercise catalog
+                                    if (catalogDao.getCount() == 0) {
+                                        List<ExerciseCatalog> catalog = getExerciseCatalogSeeds();
+                                        catalogDao.insertAll(catalog);
+                                    }
+
+                                    // Seed classic splits
+                                    List<Split> currentSplits = splitDao.getAllSplits();
+                                    if (currentSplits.isEmpty()) {
+                                        // Split 1: Upper/Lower
+                                        Split s1 = new Split("Upper / Lower", "Frecuencia 4 días", false, "Classic");
+                                        s1.isTemplate = true;
+                                        long ulId = splitDao.insert(s1);
+
+                                        List<Routine> ulRoutines = InitialData.getUpperLowerRoutines((int)ulId);
+                                        List<Long> ulRoutineIds = rDao.insertAll(ulRoutines);
+
+                                        for(int i=0; i<ulRoutines.size(); i++) {
+                                            populateExercises(reDao, ulRoutineIds.get(i).intValue(), ulRoutines.get(i).name);
                                         }
 
-                                        // RECOVERY: Ensure the ACTIVE split is treated as a User split (not a template)
-                                        databaseWriteExecutor.execute(() -> {
-                                            INSTANCE.getOpenHelper().getWritableDatabase()
-                                                .execSQL("UPDATE splits SET isTemplate = 0 WHERE isActive = 1");
-                                        });
-
-                                        // Seed exercise catalog if empty
-                                        if (catalogDao.getCount() == 0) {
-                                            List<ExerciseCatalog> catalog = getExerciseCatalogSeeds();
-                                            catalogDao.insertAll(catalog);
+                                        // Split 2: PPL
+                                        Split s2 = new Split("Push / Pull / Legs", "Frecuencia 6 días", false, "Classic");
+                                        s2.isTemplate = true;
+                                        long pplId = splitDao.insert(s2);
+                                        List<Routine> pplRoutines = InitialData.getPPLRoutines((int)pplId);
+                                        List<Long> pplIds = rDao.insertAll(pplRoutines);
+                                        for(int i=0; i<pplRoutines.size(); i++) {
+                                            populateExercises(reDao, pplIds.get(i).intValue(), pplRoutines.get(i).name);
                                         }
 
-                                        // If empty (fresh install or after cleanup), populate Classics
-                                        if (currentSplits.isEmpty()) {
-                                            // Split 1: Upper/Lower
-                                            Split s1 = new Split("Upper / Lower", "Frecuencia 4 días", false, "Classic");
-                                            s1.isTemplate = true;
-                                            long ulId = splitDao.insert(s1);
-
-                                            List<Routine> ulRoutines = InitialData.getUpperLowerRoutines((int)ulId);
-                                            List<Long> ulRoutineIds = rDao.insertAll(ulRoutines);
-
-                                            for(int i=0; i<ulRoutines.size(); i++) {
-                                                populateExercises(reDao, ulRoutineIds.get(i).intValue(), ulRoutines.get(i).name);
-                                            }
-
-                                            // Split 2: PPL
-                                            Split s2 = new Split("Push / Pull / Legs", "Frecuencia 6 días", false, "Classic");
-                                            s2.isTemplate = true;
-                                            long pplId = splitDao.insert(s2);
-                                            List<Routine> pplRoutines = InitialData.getPPLRoutines((int)pplId);
-                                            List<Long> pplIds = rDao.insertAll(pplRoutines);
-                                            for(int i=0; i<pplRoutines.size(); i++) {
-                                                populateExercises(reDao, pplIds.get(i).intValue(), pplRoutines.get(i).name);
-                                            }
-
-                                            // Split 3: Arnold
-                                            Split s3 = new Split("Arnold Split", "Pecho/Espalda + Hombro/Brazo + Pierna", false, "Classic");
-                                            s3.isTemplate = true;
-                                            long arnoldId = splitDao.insert(s3);
-                                            List<Routine> arnoldRoutines = InitialData.getArnoldRoutines((int)arnoldId);
-                                            List<Long> arnoldIds = rDao.insertAll(arnoldRoutines);
-                                            for(int i=0; i<arnoldRoutines.size(); i++) {
-                                                populateExercises(reDao, arnoldIds.get(i).intValue(), arnoldRoutines.get(i).name);
-                                            }
-
-                                            // Split 4: Full Body
-                                            Split s4 = new Split("Full Body", "Frecuencia 3 días", false, "Classic");
-                                            s4.isTemplate = true;
-                                            long fbId = splitDao.insert(s4);
-                                            List<Routine> fbRoutines = InitialData.getFullBodyRoutines((int)fbId);
-                                            List<Long> fbIds = rDao.insertAll(fbRoutines);
-                                            for(int i=0; i<fbRoutines.size(); i++) {
-                                                populateExercises(reDao, fbIds.get(i).intValue(), fbRoutines.get(i).name);
-                                            }
+                                        // Split 3: Arnold
+                                        Split s3 = new Split("Arnold Split", "Pecho/Espalda + Hombro/Brazo + Pierna", false, "Classic");
+                                        s3.isTemplate = true;
+                                        long arnoldId = splitDao.insert(s3);
+                                        List<Routine> arnoldRoutines = InitialData.getArnoldRoutines((int)arnoldId);
+                                        List<Long> arnoldIds = rDao.insertAll(arnoldRoutines);
+                                        for(int i=0; i<arnoldRoutines.size(); i++) {
+                                            populateExercises(reDao, arnoldIds.get(i).intValue(), arnoldRoutines.get(i).name);
                                         }
-                                    });
+
+                                        // Split 4: Full Body
+                                        Split s4 = new Split("Full Body", "Frecuencia 3 días", false, "Classic");
+                                        s4.isTemplate = true;
+                                        long fbId = splitDao.insert(s4);
+                                        List<Routine> fbRoutines = InitialData.getFullBodyRoutines((int)fbId);
+                                        List<Long> fbIds = rDao.insertAll(fbRoutines);
+                                        for(int i=0; i<fbRoutines.size(); i++) {
+                                            populateExercises(reDao, fbIds.get(i).intValue(), fbRoutines.get(i).name);
+                                        }
+                                    }
+                                }
+
+                                private void cleanupAndValidate() {
+                                    SplitDao splitDao = INSTANCE.splitDao();
+                                    List<Split> currentSplits = splitDao.getAllSplits();
+
+                                    // Cleanup migration artifact "Default Split" if it's the only one or invalid
+                                    if (currentSplits.size() == 1 && "Default Split".equals(currentSplits.get(0).name)) {
+                                        splitDao.delete(currentSplits.get(0));
+                                    }
+
+                                    // RECOVERY: Ensure the ACTIVE split is treated as a User split (not a template)
+                                    INSTANCE.getOpenHelper().getWritableDatabase()
+                                        .execSQL("UPDATE splits SET isTemplate = 0 WHERE isActive = 1");
                                 }
                             })
                             .build();
