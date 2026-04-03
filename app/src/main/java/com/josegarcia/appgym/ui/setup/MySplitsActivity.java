@@ -55,16 +55,20 @@ public class MySplitsActivity extends AppCompatActivity {
 
     private void loadSplits(RecyclerView recyclerView) {
         AppDatabase.databaseWriteExecutor.execute(() -> {
-            // Retry logic: si la BD aún no tiene datos, esperar un poco
+            // Retry logic: esperar y reintentar si la BD aún no tiene datos (first load)
             List<Split> splits = AppDatabase.getDatabase(this).splitDao().getUserSplits();
 
-            if (splits.isEmpty()) {
-                // Si está vacío, esperar un poco para que el seed termine
+            int retries = 0;
+            int maxRetries = 10; // Intentar hasta 5 segundos
+
+            while (splits.isEmpty() && retries < maxRetries) {
                 try {
-                    Thread.sleep(500);
+                    Thread.sleep(500); // Esperar 500ms antes de reintentar
                     splits = AppDatabase.getDatabase(this).splitDao().getUserSplits();
+                    retries++;
                 } catch (InterruptedException e) {
                     Thread.currentThread().interrupt();
+                    break;
                 }
             }
 
@@ -78,7 +82,7 @@ public class MySplitsActivity extends AppCompatActivity {
                         intent.putExtra("SPLIT_NAME", split.name);
                         startActivity(intent);
                     },
-                    // On Delete Click (Micro-Module 4.7)
+                    // On Delete Click
                     split -> {
                         DialogHelper.showConfirmationDialog(
                             this,
