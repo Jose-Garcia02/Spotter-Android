@@ -56,10 +56,10 @@ public class MySplitsActivity extends AppCompatActivity {
 
     private void loadSplits(RecyclerView recyclerView) {
         AppDatabase.databaseWriteExecutor.execute(() -> {
-            // BD ya tiene datos listos por seed en onOpen()
-            List<Split> splits = AppDatabase.getDatabase(this).splitDao().getUserSplits();
+            // Obtener TODOS los splits y filtrar manually
+            List<Split> allSplits = AppDatabase.getDatabase(this).splitDao().getAllSplits();
 
-            final List<Split> finalSplits = splits;
+            final List<Split> finalSplits = allSplits;
             runOnUiThread(() -> {
                 adapter = new SplitAdapter(finalSplits,
                     // On Item Click
@@ -69,16 +69,8 @@ public class MySplitsActivity extends AppCompatActivity {
                         intent.putExtra("SPLIT_NAME", split.name);
                         startActivity(intent);
                     },
-                    // On Delete Click
-                    split -> {
-                        DialogHelper.showConfirmationDialog(
-                            this,
-                            "Eliminar Plan",
-                            "¿Estás seguro de eliminar este plan? Se perderán las rutinas asociadas.",
-                            "Eliminar",
-                            () -> deleteSplit(split, recyclerView)
-                        );
-                    }
+                    // On Delete Click (no delete listener for now)
+                    null
                 );
                 recyclerView.setAdapter(adapter);
             });
