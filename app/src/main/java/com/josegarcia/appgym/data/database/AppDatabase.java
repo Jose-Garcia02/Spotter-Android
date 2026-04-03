@@ -139,16 +139,16 @@ public abstract class AppDatabase extends RoomDatabase {
     static final Migration MIGRATION_9_10 = new Migration(9, 10) {
         @Override
         public void migrate(@NonNull SupportSQLiteDatabase database) {
-            database.execSQL("CREATE TABLE IF NOT EXISTS `exercise_catalog` " +
-                    "(`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
-                    "`name` TEXT UNIQUE NOT NULL, " +
+            database.execSQL("CREATE TABLE IF NOT EXISTS `exercise_catalog` (" +
+                    "`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
+                    "`name` TEXT NOT NULL UNIQUE, " +
                     "`defaultUnit` TEXT, " +
                     "`muscleTag` TEXT NOT NULL, " +
                     "`isActive` INTEGER NOT NULL DEFAULT 1, " +
                     "`createdAt` INTEGER NOT NULL, " +
                     "`updatedAt` INTEGER NOT NULL)");
-            database.execSQL("CREATE INDEX IF NOT EXISTS `index_exercise_catalog_name` ON `exercise_catalog` (`name`)");
-            database.execSQL("CREATE INDEX IF NOT EXISTS `index_exercise_catalog_muscleTag` ON `exercise_catalog` (`muscleTag`)");
+            database.execSQL("CREATE INDEX `index_exercise_catalog_name` ON `exercise_catalog` (`name`)");
+            database.execSQL("CREATE INDEX `index_exercise_catalog_muscleTag` ON `exercise_catalog` (`muscleTag`)");
         }
     };
 
