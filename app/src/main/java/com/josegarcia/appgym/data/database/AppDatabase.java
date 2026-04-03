@@ -15,12 +15,14 @@ import com.josegarcia.appgym.data.dao.RoutineDao;
 import com.josegarcia.appgym.data.dao.WorkoutDao;
 import com.josegarcia.appgym.data.dao.RoutineExerciseDao;
 import com.josegarcia.appgym.data.dao.SplitDao;
+import com.josegarcia.appgym.data.dao.ExerciseCatalogDao;
 import com.josegarcia.appgym.data.entities.BodyWeightLog;
 import com.josegarcia.appgym.data.entities.ExerciseSet;
 import com.josegarcia.appgym.data.entities.Routine;
 import com.josegarcia.appgym.data.entities.RoutineExercise;
 import com.josegarcia.appgym.data.entities.Split;
 import com.josegarcia.appgym.data.entities.WorkoutSession;
+import com.josegarcia.appgym.data.entities.ExerciseCatalog;
 import com.josegarcia.appgym.utils.Constants;
 
 import java.util.ArrayList;
@@ -28,7 +30,7 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-@Database(entities = {WorkoutSession.class, ExerciseSet.class, BodyWeightLog.class, Routine.class, RoutineExercise.class, Split.class}, version = 9, exportSchema = false)
+@Database(entities = {WorkoutSession.class, ExerciseSet.class, BodyWeightLog.class, Routine.class, RoutineExercise.class, Split.class, ExerciseCatalog.class}, version = 10, exportSchema = false)
 public abstract class AppDatabase extends RoomDatabase {
 
     public abstract WorkoutDao workoutDao();
@@ -36,6 +38,7 @@ public abstract class AppDatabase extends RoomDatabase {
     public abstract RoutineDao routineDao();
     public abstract RoutineExerciseDao routineExerciseDao();
     public abstract SplitDao splitDao();
+    public abstract ExerciseCatalogDao exerciseCatalogDao();
 
     private static volatile AppDatabase INSTANCE;
     private static final int NUMBER_OF_THREADS = 4;
@@ -133,6 +136,22 @@ public abstract class AppDatabase extends RoomDatabase {
         }
     };
 
+    static final Migration MIGRATION_9_10 = new Migration(9, 10) {
+        @Override
+        public void migrate(@NonNull SupportSQLiteDatabase database) {
+            database.execSQL("CREATE TABLE IF NOT EXISTS `exercise_catalog` " +
+                    "(`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
+                    "`name` TEXT UNIQUE NOT NULL, " +
+                    "`defaultUnit` TEXT, " +
+                    "`muscleTag` TEXT NOT NULL, " +
+                    "`isActive` INTEGER NOT NULL DEFAULT 1, " +
+                    "`createdAt` INTEGER NOT NULL, " +
+                    "`updatedAt` INTEGER NOT NULL)");
+            database.execSQL("CREATE INDEX IF NOT EXISTS `index_exercise_catalog_name` ON `exercise_catalog` (`name`)");
+            database.execSQL("CREATE INDEX IF NOT EXISTS `index_exercise_catalog_muscleTag` ON `exercise_catalog` (`muscleTag`)");
+        }
+    };
+
     public static final ExecutorService databaseWriteExecutor =
             Executors.newFixedThreadPool(NUMBER_OF_THREADS);
 
@@ -142,7 +161,7 @@ public abstract class AppDatabase extends RoomDatabase {
                 if (INSTANCE == null) {
                     INSTANCE = Room.databaseBuilder(context.getApplicationContext(),
                                     AppDatabase.class, "gym_database")
-                            .addMigrations(MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6, MIGRATION_6_7, MIGRATION_7_8, MIGRATION_8_9)
+                            .addMigrations(MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6, MIGRATION_6_7, MIGRATION_7_8, MIGRATION_8_9, MIGRATION_9_10)
                             .addCallback(new Callback() {
                                 @Override
                                 public void onOpen(@NonNull SupportSQLiteDatabase db) {
@@ -152,42 +171,43 @@ public abstract class AppDatabase extends RoomDatabase {
                                         SplitDao splitDao = INSTANCE.splitDao();
                                         RoutineDao rDao = INSTANCE.routineDao();
                                         RoutineExerciseDao reDao = INSTANCE.routineExerciseDao();
+                                        ExerciseCatalogDao catalogDao = INSTANCE.exerciseCatalogDao();
 
                                         List<Split> currentSplits = splitDao.getAllSplits();
 
                                         // Cleanup migration artifact "Default Split" if it's the only one or invalid
-                                        // This fixes the "Black Screen" issue where Default Split blocked initialization but wasn't Classic
                                         if (currentSplits.size() == 1 && "Default Split".equals(currentSplits.get(0).name)) {
                                             splitDao.delete(currentSplits.get(0));
                                             currentSplits.clear();
                                         }
 
                                         // RECOVERY: Ensure the ACTIVE split is treated as a User split (not a template)
-                                        // This fixes the issue where an active classic split disappears from "My Plans"
                                         databaseWriteExecutor.execute(() -> {
-                                            // Direct SQL or DAO
                                             INSTANCE.getOpenHelper().getWritableDatabase()
                                                 .execSQL("UPDATE splits SET isTemplate = 0 WHERE isActive = 1");
                                         });
 
+                                        // Seed exercise catalog if empty
+                                        if (catalogDao.getCount() == 0) {
+                                            List<ExerciseCatalog> catalog = getExerciseCatalogSeeds();
+                                            catalogDao.insertAll(catalog);
+                                        }
+
                                         // If empty (fresh install or after cleanup), populate Classics
                                         if (currentSplits.isEmpty()) {
-                                            // Split 1: Upper/Lower (Active by default -> changed to false)
+                                            // Split 1: Upper/Lower
                                             Split s1 = new Split("Upper / Lower", "Frecuencia 4 días", false, "Classic");
                                             s1.isTemplate = true;
                                             long ulId = splitDao.insert(s1);
 
-                                            // Use new helper
                                             List<Routine> ulRoutines = InitialData.getUpperLowerRoutines((int)ulId);
                                             List<Long> ulRoutineIds = rDao.insertAll(ulRoutines);
 
-                                            // Populate exercises for Upper/Lower
-                                            // Assuming order follows insertion, we traverse
                                             for(int i=0; i<ulRoutines.size(); i++) {
                                                 populateExercises(reDao, ulRoutineIds.get(i).intValue(), ulRoutines.get(i).name);
                                             }
 
-                                            // Split 2: PPL (Push Pull Legs)
+                                            // Split 2: PPL
                                             Split s2 = new Split("Push / Pull / Legs", "Frecuencia 6 días", false, "Classic");
                                             s2.isTemplate = true;
                                             long pplId = splitDao.insert(s2);
@@ -239,5 +259,55 @@ public abstract class AppDatabase extends RoomDatabase {
         if (!list.isEmpty()) {
             dao.insertAll(list);
         }
+    }
+
+    private static List<ExerciseCatalog> getExerciseCatalogSeeds() {
+        List<ExerciseCatalog> exercises = new ArrayList<>();
+
+        // Pecho (Chest)
+        exercises.add(new ExerciseCatalog("Press con Mancuernas", "kg", "Pecho"));
+        exercises.add(new ExerciseCatalog("Press Banca", "kg", "Pecho"));
+        exercises.add(new ExerciseCatalog("Aperturas", "kg", "Pecho"));
+        exercises.add(new ExerciseCatalog("Press Inclinado", "kg", "Pecho"));
+
+        // Espalda (Back)
+        exercises.add(new ExerciseCatalog("Remo T", "kg", "Espalda"));
+        exercises.add(new ExerciseCatalog("Jalon al Pecho", "kg", "Espalda"));
+        exercises.add(new ExerciseCatalog("Remo en Maquina", "kg", "Espalda"));
+        exercises.add(new ExerciseCatalog("Dominadas", "kg", "Espalda"));
+        exercises.add(new ExerciseCatalog("Remo Mancuerna", "kg", "Espalda"));
+        exercises.add(new ExerciseCatalog("Pullover en Polea", "kg", "Espalda"));
+
+        // Hombro (Shoulders)
+        exercises.add(new ExerciseCatalog("Press Militar", "kg", "Hombro"));
+        exercises.add(new ExerciseCatalog("Elevaciones Laterales", "kg", "Hombro"));
+        exercises.add(new ExerciseCatalog("Hombro Posterior", "kg", "Hombro"));
+        exercises.add(new ExerciseCatalog("Press Arnold", "kg", "Hombro"));
+
+        // Biceps
+        exercises.add(new ExerciseCatalog("Curl Predicador", "kg", "Biceps"));
+        exercises.add(new ExerciseCatalog("Curl Mancuerna", "kg", "Biceps"));
+        exercises.add(new ExerciseCatalog("Curl Barra", "kg", "Biceps"));
+
+        // Triceps
+        exercises.add(new ExerciseCatalog("Extension de Triceps", "kg", "Triceps"));
+        exercises.add(new ExerciseCatalog("Press Frances", "kg", "Triceps"));
+        exercises.add(new ExerciseCatalog("Fondos", "kg", "Triceps"));
+
+        // Pierna (Legs)
+        exercises.add(new ExerciseCatalog("Sentadilla Libre", "kg", "Pierna"));
+        exercises.add(new ExerciseCatalog("Sentadilla Hack", "kg", "Pierna"));
+        exercises.add(new ExerciseCatalog("Prensa de Piernas", "placas", "Pierna"));
+        exercises.add(new ExerciseCatalog("Curl Femoral", "kg", "Pierna"));
+        exercises.add(new ExerciseCatalog("Extension de Cuadriceps", "kg", "Pierna"));
+        exercises.add(new ExerciseCatalog("Pantorrilla", "kg", "Pierna"));
+        exercises.add(new ExerciseCatalog("Aductores", "kg", "Pierna"));
+
+        // Core
+        exercises.add(new ExerciseCatalog("Abdominales Maquina", "kg", "Core"));
+        exercises.add(new ExerciseCatalog("Planchas", "kg", "Core"));
+        exercises.add(new ExerciseCatalog("Cable Woodchop", "kg", "Core"));
+
+        return exercises;
     }
 }
