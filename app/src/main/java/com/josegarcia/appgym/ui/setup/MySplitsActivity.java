@@ -31,12 +31,8 @@ public class MySplitsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my_splits); // NEW LAYOUT
 
-        // ...existing code...
-
         recyclerSplits = findViewById(R.id.recyclerSplits);
         recyclerSplits.setLayoutManager(new LinearLayoutManager(this));
-
-        // ...existing code...
 
         // Inicializar adapter vacío para evitar pantalla negra
         adapter = new SplitAdapter(new java.util.ArrayList<>(), split -> {}, split -> {});
@@ -48,20 +44,14 @@ public class MySplitsActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        // Recargar splits cuando volvemos de ConfigureSplitActivity
-        if (recyclerSplits != null) {
-            loadSplits(recyclerSplits);
-        }
+        // LiveData automatically handles refreshing, no need to manually reload here
     }
 
     private void loadSplits(RecyclerView recyclerView) {
-        AppDatabase.databaseWriteExecutor.execute(() -> {
-            // Obtener TODOS los splits y filtrar manually
-            List<Split> allSplits = AppDatabase.getDatabase(this).splitDao().getAllSplits();
-
-            final List<Split> finalSplits = allSplits;
-            runOnUiThread(() -> {
-                adapter = new SplitAdapter(finalSplits,
+        // Observe user splits automatically via LiveData
+        AppDatabase.getDatabase(this).splitDao().getUserSplitsLiveData().observe(this, splits -> {
+            if (splits != null) {
+                adapter = new SplitAdapter(splits,
                     // On Item Click
                     split -> {
                         Intent intent = new Intent(this, ConfigureSplitActivity.class);
@@ -69,19 +59,26 @@ public class MySplitsActivity extends AppCompatActivity {
                         intent.putExtra("SPLIT_NAME", split.name);
                         startActivity(intent);
                     },
-                    // On Delete Click (no delete listener for now)
-                    null
+                    // On Delete Click
+                    split -> {
+                        DialogHelper.showConfirmationDialog(
+                            this,
+                            "Eliminar Plan",
+                            "¿Estás seguro de eliminar este plan? Se perderán las rutinas asociadas.",
+                            "Eliminar",
+                            () -> deleteSplit(split, recyclerView)
+                        );
+                    }
                 );
                 recyclerView.setAdapter(adapter);
-            });
+            }
         });
     }
 
     private void deleteSplit(Split split, RecyclerView recyclerView) {
         AppDatabase.databaseWriteExecutor.execute(() -> {
             AppDatabase.getDatabase(this).splitDao().delete(split);
-            // Reload list
-            loadSplits(recyclerView);
+            // No need to manually reload Splits, LiveData will update the UI automatically
         });
     }
 }

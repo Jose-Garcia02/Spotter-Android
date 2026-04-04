@@ -23,11 +23,20 @@ public interface SplitDao {
     @Query("SELECT * FROM splits")
     List<Split> getAllSplits();
 
+    @Query("SELECT * FROM splits")
+    LiveData<List<Split>> getAllSplitsLiveData();
+
     @Query("SELECT * FROM splits WHERE isTemplate = 1")
     List<Split> getTemplateSplits();
 
+    @Query("SELECT * FROM splits WHERE isTemplate = 1")
+    LiveData<List<Split>> getTemplateSplitsLiveData();
+
     @Query("SELECT * FROM splits WHERE isTemplate = 0")
     List<Split> getUserSplits();
+
+    @Query("SELECT * FROM splits WHERE isTemplate = 0")
+    LiveData<List<Split>> getUserSplitsLiveData();
 
     @Query("SELECT * FROM splits WHERE id = :id")
     Split getSplitById(int id);

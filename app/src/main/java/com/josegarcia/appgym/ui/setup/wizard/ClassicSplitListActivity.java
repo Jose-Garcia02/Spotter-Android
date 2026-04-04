@@ -42,14 +42,13 @@ public class ClassicSplitListActivity extends AppCompatActivity {
         RecyclerView recyclerView = findViewById(R.id.recyclerSplits);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        // Load splits async
-        AppDatabase.databaseWriteExecutor.execute(() -> {
-            // Filter by template
-            List<Split> templateSplits = AppDatabase.getDatabase(this).splitDao().getTemplateSplits();
-
-            runOnUiThread(() -> recyclerView.setAdapter(new SplitAdapter(templateSplits, split -> {
-                cloneAndOpenSplit(split);
-            })));
+        // Use LiveData to automatically populate UI when async seed process completes
+        AppDatabase.getDatabase(this).splitDao().getTemplateSplitsLiveData().observe(this, templateSplits -> {
+            if (templateSplits != null && !templateSplits.isEmpty()) {
+                recyclerView.setAdapter(new SplitAdapter(templateSplits, split -> {
+                    cloneAndOpenSplit(split);
+                }));
+            }
         });
     }
 

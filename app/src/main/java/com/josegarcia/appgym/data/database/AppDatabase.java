@@ -171,9 +171,15 @@ public abstract class AppDatabase extends RoomDatabase {
                                 @Override
                                 public void onOpen(@NonNull SupportSQLiteDatabase db) {
                                     super.onOpen(db);
-                                    // Seed synchronously to ensure data is ready
-                                    seedIfEmpty();
-                                    cleanupAndValidate();
+                                    // Seed asynchronously to prevent Room initialization deadlocks
+                                    databaseWriteExecutor.execute(() -> {
+                                        try {
+                                            seedIfEmpty();
+                                            cleanupAndValidate();
+                                        } catch (Exception e) {
+                                            android.util.Log.e("AppDatabase", "Error in onOpen", e);
+                                        }
+                                    });
                                 }
 
                                 private void seedIfEmpty() {
