@@ -108,7 +108,13 @@ public interface WorkoutDao {
     Long getTotalVolumeInRange(long startDate, long endDate);
 
     // Consulta de Constancia (Contador de dias activos vs total dias)
-    // Útil para estadísticas rápidas "X entrenamientos este mes"
+    // til para estadsticas rpidas "X entrenamientos este mes"
     @Query("SELECT COUNT(DISTINCT date) FROM workout_sessions WHERE date BETWEEN :startDate AND :endDate")
     int getActiveDaysCount(long startDate, long endDate);
+
+    @Query("SELECT * FROM workout_sessions WHERE routineName = :routineName ORDER BY date DESC LIMIT 1")
+    WorkoutSession getLastWorkoutForRoutine(String routineName);
+
+    @Query("SELECT * FROM workout_sessions WHERE id IN (SELECT DISTINCT sessionId FROM exercise_sets WHERE exerciseName = :exerciseName) ORDER BY date DESC LIMIT :limit")
+    List<WorkoutSession> getSessionsForExercise(String exerciseName, int limit);
 }

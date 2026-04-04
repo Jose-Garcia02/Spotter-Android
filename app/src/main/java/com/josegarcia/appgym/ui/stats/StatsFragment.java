@@ -48,6 +48,7 @@ public class StatsFragment extends Fragment {
     private TextView summaryView;
     private ChipGroup chipGroupSeries;
     private Button btnWeightTracker;
+    private Button btnPerformanceTracker;
 
     private List<ExerciseProgressEntry> currentDetailedData;
     private String currentExerciseName;
@@ -100,6 +101,7 @@ public class StatsFragment extends Fragment {
         summaryView = view.findViewById(R.id.tvStatsSummary);
         chipGroupSeries = view.findViewById(R.id.chipGroupSeries);
         btnWeightTracker = view.findViewById(R.id.btn_open_weight_tracker);
+        btnPerformanceTracker = view.findViewById(R.id.btn_open_performance);
 
         if (savedInstanceState != null) {
             currentExerciseName = savedInstanceState.getString(KEY_CURRENT_EXERCISE);
@@ -109,6 +111,7 @@ public class StatsFragment extends Fragment {
         loadExercises();
 
         btnWeightTracker.setOnClickListener(v -> checkWeightDataAndNavigate(v));
+        btnPerformanceTracker.setOnClickListener(v -> Navigation.findNavController(v).navigate(R.id.performanceFragment));
 
         // Listener attached in loadExercises now
         radioGroupMetric.setOnCheckedChangeListener((group, checkedId) -> updateChart());

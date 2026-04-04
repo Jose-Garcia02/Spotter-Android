@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:padding="8dp"
+    android:layout_marginBottom="8dp"
+    android:background="@drawable/bg_surface_card"
+    android:gravity="center_vertical"
+    android:weightSum="4">
+    <TextView
+        android:id="@+id/tvSetNumber"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.8"
+        android:text="1"
+        android:textColor="@color/text_secondary"
+        android:textSize="14sp"
+        android:gravity="center"
+        android:textStyle="bold" />
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1.2"
+        android:orientation="vertical"
+        android:gravity="center">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Previo"
+            android:textColor="@color/text_hint"
+            android:textSize="12sp" />
+        <TextView
+            android:id="@+id/tvPrevStats"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="100kg x 10"
+            android:textColor="@color/text_secondary"
+            android:textSize="14sp" />
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1.2"
+        android:orientation="vertical"
+        android:gravity="center">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Actual"
+            android:textColor="@color/vivid_blue"
+            android:textSize="12sp" />
+        <TextView
+            android:id="@+id/tvCurrentStats"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="105kg x 10"
+            android:textColor="@color/text_primary"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+    </LinearLayout>
+    <TextView
+        android:id="@+id/tvTrend"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.8"
+        android:text="+2%"
+        android:textColor="@color/vivid_green"
+        android:textSize="14sp"
+        android:gravity="center"
+        android:textStyle="bold" />
+</LinearLayout>

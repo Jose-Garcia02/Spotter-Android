@@ -40,4 +40,10 @@
         android:name="com.josegarcia.appgym.ui.SettingsFragment"
         android:label="Ajustes"
         tools:layout="@layout/fragment_settings" />
+
+    <fragment
+        android:id="@+id/performanceFragment"
+        android:name="com.josegarcia.appgym.ui.performance.PerformanceFragment"
+        android:label="Rendimiento"
+        tools:layout="@layout/fragment_performance" />
 </navigation>

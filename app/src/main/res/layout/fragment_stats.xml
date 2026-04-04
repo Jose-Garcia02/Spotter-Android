@@ -26,6 +26,17 @@
         android:textColor="@color/text_primary"
         android:drawableStart="@drawable/ic_chart"
         android:drawableTint="@color/vivid_green"
+        android:layout_marginBottom="8dp"/>
+
+    <Button
+        android:id="@+id/btn_open_performance"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Comparativa de Rendimiento"
+        android:backgroundTint="@color/surface_card"
+        android:textColor="@color/text_primary"
+        android:drawableStart="@drawable/ic_dumbbell"
+        android:drawableTint="@color/vivid_blue"
         android:layout_marginBottom="16dp"/>
 
     <TextView
