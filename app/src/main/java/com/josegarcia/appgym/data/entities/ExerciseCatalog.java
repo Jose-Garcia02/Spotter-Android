@@ -19,6 +19,7 @@ public class ExerciseCatalog {
     public long createdAt;
     public long updatedAt;
 
+    @androidx.room.Ignore
     public ExerciseCatalog(String name, String defaultUnit, String muscleTag) {
         this.name = name;
         this.defaultUnit = defaultUnit;
@@ -32,4 +33,3 @@ public class ExerciseCatalog {
     public ExerciseCatalog() {
     }
 }
-
