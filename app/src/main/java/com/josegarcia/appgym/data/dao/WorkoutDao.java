@@ -115,6 +115,12 @@ public interface WorkoutDao {
     @Query("SELECT * FROM workout_sessions WHERE routineName = :routineName ORDER BY date DESC LIMIT 1")
     WorkoutSession getLastWorkoutForRoutine(String routineName);
 
+    @Query("SELECT * FROM workout_sessions WHERE routineName = :routineName ORDER BY date DESC LIMIT :limit")
+    List<WorkoutSession> getSessionsForRoutine(String routineName, int limit);
+
     @Query("SELECT * FROM workout_sessions WHERE id IN (SELECT DISTINCT sessionId FROM exercise_sets WHERE exerciseName = :exerciseName) ORDER BY date DESC LIMIT :limit")
     List<WorkoutSession> getSessionsForExercise(String exerciseName, int limit);
+
+    @Query("SELECT DISTINCT routineName FROM workout_sessions ORDER BY routineName ASC")
+    List<String> getRoutineNamesWithHistory();
 }

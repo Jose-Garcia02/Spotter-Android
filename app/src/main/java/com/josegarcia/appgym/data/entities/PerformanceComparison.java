@@ -1,6 +1,9 @@
 package com.josegarcia.appgym.data.entities;
 import android.graphics.Color;
 public class PerformanceComparison {
+    public boolean isHeader; // New flags for grouping by exercise
+    public String exerciseName;
+
     public int setOrder;
     public String status;  // MEJORA, EMPEORA, MANTIENE, NUEVO
     public double currentWeight;

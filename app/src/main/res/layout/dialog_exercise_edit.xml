@@ -3,46 +3,74 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:padding="20dp">
-
-    <com.google.android.material.textfield.TextInputLayout
+    android:padding="24dp"
+    android:background="@drawable/bg_dialog_rounded">
+    <TextView
+        android:id="@+id/tvDialogTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp">
-
-        <EditText
-            android:id="@+id/etExerciseName"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Nombre del ejercicio"
-            android:inputType="text" />
-
-    </com.google.android.material.textfield.TextInputLayout>
-
+        android:text="Editar Ejercicio"
+        android:textColor="@color/text_primary"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="16dp"/>
+    <EditText
+        android:id="@+id/etExerciseName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Nombre del ejercicio"
+        android:backgroundTint="@color/primary_accent"
+        android:textColor="@color/text_primary"
+        android:textColorHint="@color/text_secondary"
+        android:inputType="text"
+        android:padding="12dp"
+        android:textSize="16sp"
+        android:layout_marginBottom="16dp"/>
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Unidad de medida"
         android:textStyle="bold"
+        android:textColor="@color/text_primary"
         android:layout_marginBottom="8dp" />
-
     <Spinner
         android:id="@+id/spinnerUnit"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="48dp"
+        android:background="@drawable/bg_input_rounded"
         android:layout_marginBottom="16dp" />
-
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Grupo muscular"
         android:textStyle="bold"
+        android:textColor="@color/text_primary"
         android:layout_marginBottom="8dp" />
-
     <Spinner
         android:id="@+id/spinnerMuscleTag"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
-
+        android:layout_height="48dp"
+        android:background="@drawable/bg_input_rounded"
+        android:layout_marginBottom="24dp" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="end">
+        <Button
+            android:id="@+id/btnDialogNegative"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Cancelar"
+            style="@style/Widget.MaterialComponents.Button.TextButton"
+            android:textColor="@color/text_secondary"/>
+        <Button
+            android:id="@+id/btnDialogPositive"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Guardar"
+            android:layout_marginStart="8dp"
+            android:backgroundTint="@color/primary_accent"
+            android:textColor="@android:color/white"/>
+    </LinearLayout>
 </LinearLayout>
-

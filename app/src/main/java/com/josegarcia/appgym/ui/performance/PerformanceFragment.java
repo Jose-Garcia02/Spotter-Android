@@ -17,11 +17,11 @@ import com.josegarcia.appgym.R;
 import java.util.List;
 public class PerformanceFragment extends Fragment {
     private PerformanceViewModel viewModel;
-    private Spinner spinnerExercises;
+    private Spinner spinnerRoutines;
     private TextView tvComparisonHeader;
     private RecyclerView recyclerPerformanceSets;
     private PerformanceAdapter adapter;
-    private String currentExerciseName;
+    private String currentRoutineName;
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -30,7 +30,7 @@ public class PerformanceFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        spinnerExercises = view.findViewById(R.id.spinnerPerformanceExercises);
+        spinnerRoutines = view.findViewById(R.id.spinnerPerformanceExercises);
         tvComparisonHeader = view.findViewById(R.id.tvComparisonHeader);
         recyclerPerformanceSets = view.findViewById(R.id.recyclerPerformanceSets);
         recyclerPerformanceSets.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -38,28 +38,28 @@ public class PerformanceFragment extends Fragment {
         recyclerPerformanceSets.setAdapter(adapter);
         viewModel = new ViewModelProvider(this).get(PerformanceViewModel.class);
         setupObservers();
-        viewModel.loadExercises();
+        viewModel.loadRoutines();
     }
     private void setupObservers() {
-        viewModel.getExercisesWithHistory().observe(getViewLifecycleOwner(), exercises -> {
-            if (exercises == null || exercises.isEmpty()) {
-                tvComparisonHeader.setText("Sin entrenamientos para comparar");
+        viewModel.getRoutinesWithHistory().observe(getViewLifecycleOwner(), routines -> {
+            if (routines == null || routines.isEmpty()) {
+                tvComparisonHeader.setText("Sin rutinas para comparar.");
                 return;
             }
             ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<>(requireContext(),
-                    android.R.layout.simple_spinner_item, exercises);
+                    android.R.layout.simple_spinner_item, routines);
             spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-            spinnerExercises.setAdapter(spinnerAdapter);
-            if (currentExerciseName != null) {
-                int pos = spinnerAdapter.getPosition(currentExerciseName);
-                if (pos >= 0) spinnerExercises.setSelection(pos);
+            spinnerRoutines.setAdapter(spinnerAdapter);
+            if (currentRoutineName != null) {
+                int pos = spinnerAdapter.getPosition(currentRoutineName);
+                if (pos >= 0) spinnerRoutines.setSelection(pos);
             }
-            spinnerExercises.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            spinnerRoutines.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                 @Override
                 public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                    String selected = exercises.get(position);
-                    if (!selected.equals(currentExerciseName)) {
-                        currentExerciseName = selected;
+                    String selected = routines.get(position);
+                    if (!selected.equals(currentRoutineName)) {
+                        currentRoutineName = selected;
                         viewModel.compareCurrentVsPrevious(selected);
                     }
                 }
@@ -67,9 +67,9 @@ public class PerformanceFragment extends Fragment {
                 public void onNothingSelected(AdapterView<?> parent) {}
             });
             // Initial load for first item
-            if (currentExerciseName == null && !exercises.isEmpty()) {
-                currentExerciseName = exercises.get(0);
-                viewModel.compareCurrentVsPrevious(currentExerciseName);
+            if (currentRoutineName == null && !routines.isEmpty()) {
+                currentRoutineName = routines.get(0);
+                viewModel.compareCurrentVsPrevious(currentRoutineName);
             }
         });
         viewModel.getComparisonHeader().observe(getViewLifecycleOwner(), header -> {
@@ -77,7 +77,6 @@ public class PerformanceFragment extends Fragment {
         });
         viewModel.getComparisonResults().observe(getViewLifecycleOwner(), results -> {
             if (results == null || results.isEmpty()) {
-                // Should show some empty state
                 adapter.submitList(new java.util.ArrayList<>());
             } else {
                 adapter.submitList(results);

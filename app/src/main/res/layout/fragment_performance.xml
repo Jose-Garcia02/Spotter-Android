@@ -8,7 +8,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Rendimiento del Ejercicio"
+        android:text="Rendimiento de Rutina"
         android:textColor="@color/text_primary"
         android:textSize="24sp"
         android:textStyle="bold"
@@ -17,7 +17,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Selecciona un ejercicio de tu historial"
+        android:text="Selecciona una rutina de tu historial"
         android:textColor="@color/text_secondary"
         android:textSize="14sp"
         android:layout_marginBottom="8dp"/>

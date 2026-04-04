@@ -10,33 +10,58 @@ import com.josegarcia.appgym.data.entities.PerformanceComparison;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-public class PerformanceAdapter extends RecyclerView.Adapter<PerformanceAdapter.ViewHolder> {
+public class PerformanceAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+    private static final int TYPE_HEADER = 0;
+    private static final int TYPE_ITEM = 1;
     private List<PerformanceComparison> items = new ArrayList<>();
     public void submitList(List<PerformanceComparison> newItems) {
         this.items = newItems;
         notifyDataSetChanged();
     }
+    @Override
+    public int getItemViewType(int position) {
+        return items.get(position).isHeader ? TYPE_HEADER : TYPE_ITEM;
+    }
     @NonNull
     @Override
-    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_performance_set_comparison, parent, false);
-        return new ViewHolder(view);
+    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        if (viewType == TYPE_HEADER) {
+            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_performance_exercise_header, parent, false);
+            return new HeaderViewHolder(view);
+        } else {
+            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_performance_set_comparison, parent, false);
+            return new ItemViewHolder(view);
+        }
     }
     @Override
-    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         PerformanceComparison item = items.get(position);
-        holder.bind(item);
+        if (holder instanceof HeaderViewHolder) {
+            ((HeaderViewHolder) holder).bind(item);
+        } else if (holder instanceof ItemViewHolder) {
+            ((ItemViewHolder) holder).bind(item);
+        }
     }
     @Override
     public int getItemCount() {
         return items.size();
     }
-    static class ViewHolder extends RecyclerView.ViewHolder {
+    static class HeaderViewHolder extends RecyclerView.ViewHolder {
+        private final TextView tvHeaderExerciseName;
+        public HeaderViewHolder(@NonNull View itemView) {
+            super(itemView);
+            tvHeaderExerciseName = itemView.findViewById(R.id.tvHeaderExerciseName);
+        }
+        public void bind(PerformanceComparison item) {
+            tvHeaderExerciseName.setText(item.exerciseName);
+        }
+    }
+    static class ItemViewHolder extends RecyclerView.ViewHolder {
         private final TextView tvSetNumber;
         private final TextView tvPrevStats;
         private final TextView tvCurrentStats;
         private final TextView tvTrend;
-        public ViewHolder(@NonNull View itemView) {
+        public ItemViewHolder(@NonNull View itemView) {
             super(itemView);
             tvSetNumber = itemView.findViewById(R.id.tvSetNumber);
             tvPrevStats = itemView.findViewById(R.id.tvPrevStats);

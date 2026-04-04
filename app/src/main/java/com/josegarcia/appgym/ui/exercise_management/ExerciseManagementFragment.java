@@ -61,12 +61,30 @@ public class ExerciseManagementFragment extends DialogFragment implements Exerci
 
     @Override
     public void onDelete(ExerciseCatalog exercise) {
-        new AlertDialog.Builder(getContext())
-            .setTitle("Eliminar ejercicio")
-            .setMessage("¿Estás seguro de que deseas eliminar " + exercise.name + "?")
-            .setPositiveButton("Eliminar", (dialog, which) -> viewModel.deleteExercise(exercise.id))
-            .setNegativeButton("Cancelar", null)
-            .show();
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        View dialogView = LayoutInflater.from(getContext()).inflate(R.layout.dialog_confirm_delete, null);
+
+        android.widget.TextView tvTitle = dialogView.findViewById(R.id.tvDialogTitle);
+        android.widget.TextView tvMessage = dialogView.findViewById(R.id.tvDialogMessage);
+
+        tvTitle.setText("Eliminar ejercicio");
+        tvMessage.setText("¿Estás seguro de que deseas eliminar " + exercise.name + "?");
+
+        builder.setView(dialogView);
+        AlertDialog dialog = builder.create();
+
+        if (dialog.getWindow() != null) {
+            dialog.getWindow().setBackgroundDrawable(new android.graphics.drawable.ColorDrawable(android.graphics.Color.TRANSPARENT));
+        }
+
+        dialogView.findViewById(R.id.btnDialogPositive).setOnClickListener(v -> {
+            viewModel.deleteExercise(exercise.id);
+            dialog.dismiss();
+        });
+
+        dialogView.findViewById(R.id.btnDialogNegative).setOnClickListener(v -> dialog.dismiss());
+
+        dialog.show();
     }
 
     private void showCreateDialog() {
@@ -80,7 +98,15 @@ public class ExerciseManagementFragment extends DialogFragment implements Exerci
     private void showExerciseDialog(ExerciseCatalog exercise) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         View dialogView = LayoutInflater.from(getContext()).inflate(R.layout.dialog_exercise_edit, null);
+        builder.setView(dialogView);
 
+        AlertDialog dialog = builder.create();
+
+        if (dialog.getWindow() != null) {
+            dialog.getWindow().setBackgroundDrawable(new android.graphics.drawable.ColorDrawable(android.graphics.Color.TRANSPARENT));
+        }
+
+        android.widget.TextView tvTitle = dialogView.findViewById(R.id.tvDialogTitle);
         EditText etName = dialogView.findViewById(R.id.etExerciseName);
         Spinner spinnerUnit = dialogView.findViewById(R.id.spinnerUnit);
         Spinner spinnerMuscle = dialogView.findViewById(R.id.spinnerMuscleTag);
@@ -93,32 +119,35 @@ public class ExerciseManagementFragment extends DialogFragment implements Exerci
         muscleAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerMuscle.setAdapter(muscleAdapter);
 
+        tvTitle.setText(exercise == null ? "Crear ejercicio" : "Editar ejercicio");
+
         if (exercise != null) {
             etName.setText(exercise.name);
             spinnerUnit.setSelection(getIndex(spinnerUnit, exercise.defaultUnit));
             spinnerMuscle.setSelection(getIndex(spinnerMuscle, exercise.muscleTag));
         }
 
-        builder.setView(dialogView)
-            .setTitle(exercise == null ? "Crear ejercicio" : "Editar ejercicio")
-            .setPositiveButton("Guardar", (dialog, which) -> {
-                String name = etName.getText().toString().trim();
-                String unit = (String) spinnerUnit.getSelectedItem();
-                String muscleTag = (String) spinnerMuscle.getSelectedItem();
+        dialogView.findViewById(R.id.btnDialogPositive).setOnClickListener(v -> {
+            String name = etName.getText().toString().trim();
+            String unit = (String) spinnerUnit.getSelectedItem();
+            String muscleTag = (String) spinnerMuscle.getSelectedItem();
 
-                if (name.isEmpty()) {
-                    android.widget.Toast.makeText(getContext(), "El nombre es obligatorio", android.widget.Toast.LENGTH_SHORT).show();
-                    return;
-                }
+            if (name.isEmpty()) {
+                android.widget.Toast.makeText(getContext(), "El nombre es obligatorio", android.widget.Toast.LENGTH_SHORT).show();
+                return;
+            }
 
-                if (exercise == null) {
-                    viewModel.insertExercise(name, unit, muscleTag);
-                } else {
-                    viewModel.updateExercise(exercise.id, name, unit, muscleTag);
-                }
-            })
-            .setNegativeButton("Cancelar", null)
-            .show();
+            if (exercise == null) {
+                viewModel.insertExercise(name, unit, muscleTag);
+            } else {
+                viewModel.updateExercise(exercise.id, name, unit, muscleTag);
+            }
+            dialog.dismiss();
+        });
+
+        dialogView.findViewById(R.id.btnDialogNegative).setOnClickListener(v -> dialog.dismiss());
+
+        dialog.show();
     }
 
     private int getIndex(Spinner spinner, String value) {
@@ -130,4 +159,3 @@ public class ExerciseManagementFragment extends DialogFragment implements Exerci
         return 0;
     }
 }
-
