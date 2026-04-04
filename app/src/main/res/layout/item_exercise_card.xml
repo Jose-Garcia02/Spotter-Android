@@ -63,7 +63,7 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"/>
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/btnAddSet"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

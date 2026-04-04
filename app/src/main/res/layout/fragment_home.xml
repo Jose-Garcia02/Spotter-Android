@@ -39,7 +39,7 @@
         android:layout_marginBottom="16dp"/>
 
     <!-- 1. Volume Donut Chart Container -->
-    <androidx.cardview.widget.CardView
+    <com.google.android.material.card.MaterialCardView
         android:id="@+id/cardVolumeSummary"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -68,7 +68,7 @@
                 android:layout_height="200dp"
                 android:layout_marginTop="8dp"/>
         </LinearLayout>
-    </androidx.cardview.widget.CardView>
+    </com.google.android.material.card.MaterialCardView>
 
     <!-- 2. Weight Tracker Summary (Existing modified) -->
     <com.google.android.material.card.MaterialCardView
@@ -113,7 +113,7 @@
     </com.google.android.material.card.MaterialCardView>
 
     <!-- 3. Heatmap Container -->
-    <androidx.cardview.widget.CardView
+    <com.google.android.material.card.MaterialCardView
         android:id="@+id/cardHeatmap"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -145,7 +145,7 @@
                 android:clipToPadding="false"
                 android:nestedScrollingEnabled="false"/>
         </LinearLayout>
-    </androidx.cardview.widget.CardView>
+    </com.google.android.material.card.MaterialCardView>
 
     <!-- Removed Volume Bar Chart related views if any here, but HomeFragment uses Donut now -->
 

@@ -23,7 +23,7 @@
         android:divider="@color/text_secondary"
         android:dividerHeight="0.5dp"/>
 
-    <Button
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/btnDialogCancel"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

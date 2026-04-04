@@ -27,14 +27,14 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:gravity="end">
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/btnDialogNegative"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Cancelar"
             style="@style/Widget.MaterialComponents.Button.TextButton"
             android:textColor="@color/text_secondary"/>
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/btnDialogPositive"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

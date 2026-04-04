@@ -34,7 +34,7 @@
         android:orientation="horizontal"
         android:gravity="center">
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/btnDiscard"
             style="@style/Widget.MaterialComponents.Button.TextButton"
             android:layout_width="0dp"
@@ -44,7 +44,7 @@
             android:textColor="@color/error"
             android:layout_marginEnd="8dp"/>
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/btnRecover"
             android:layout_width="0dp"
             android:layout_weight="1"
