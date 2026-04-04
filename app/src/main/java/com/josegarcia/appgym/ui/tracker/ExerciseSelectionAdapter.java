@@ -12,14 +12,14 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.josegarcia.appgym.R;
 
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
 public class ExerciseSelectionAdapter extends RecyclerView.Adapter<ExerciseSelectionAdapter.SelectViewHolder> {
 
     private List<String> allExercises = new ArrayList<>();
-    private final Set<String> selectedExercises = new HashSet<>();
+    private final Set<String> selectedExercises = new LinkedHashSet<>();
     private final OnSelectionChangedListener listener;
 
     public interface OnSelectionChangedListener {
@@ -33,6 +33,12 @@ public class ExerciseSelectionAdapter extends RecyclerView.Adapter<ExerciseSelec
     public void setExercises(List<String> exercises) {
         this.allExercises = exercises;
         notifyDataSetChanged();
+    }
+
+    public void moveItem(int fromPosition, int toPosition) {
+        String item = allExercises.remove(fromPosition);
+        allExercises.add(toPosition, item);
+        notifyItemMoved(fromPosition, toPosition);
     }
 
     public ArrayList<String> getSelectedExercises() {

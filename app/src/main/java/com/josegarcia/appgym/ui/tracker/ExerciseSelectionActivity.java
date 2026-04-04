@@ -62,6 +62,15 @@ public class ExerciseSelectionActivity extends AppCompatActivity {
         btnStart = findViewById(R.id.btnStartFreeWorkout);
         EditText searchInput = findViewById(R.id.etSearch);
 
+        searchInput.setOnEditorActionListener((v, actionId, event) -> {
+            if (actionId == android.view.inputmethod.EditorInfo.IME_ACTION_DONE || actionId == android.view.inputmethod.EditorInfo.IME_ACTION_GO || actionId == android.view.inputmethod.EditorInfo.IME_ACTION_SEARCH) {
+                android.view.inputmethod.InputMethodManager imm = (android.view.inputmethod.InputMethodManager) getSystemService(android.content.Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+                return true;
+            }
+            return false;
+        });
+
         adapter = new ExerciseSelectionAdapter(count ->
             btnStart.setText("Iniciar Entrenamiento (" + count + ")")
         );
@@ -69,6 +78,21 @@ public class ExerciseSelectionActivity extends AppCompatActivity {
 
         // Load exercises
         loadExercises();
+
+        androidx.recyclerview.widget.ItemTouchHelper.SimpleCallback callback = new androidx.recyclerview.widget.ItemTouchHelper.SimpleCallback(
+                androidx.recyclerview.widget.ItemTouchHelper.UP | androidx.recyclerview.widget.ItemTouchHelper.DOWN,
+                0
+        ) {
+            @Override
+            public boolean onMove(@androidx.annotation.NonNull RecyclerView recyclerView, @androidx.annotation.NonNull RecyclerView.ViewHolder viewHolder, @androidx.annotation.NonNull RecyclerView.ViewHolder target) {
+                adapter.moveItem(viewHolder.getAdapterPosition(), target.getAdapterPosition());
+                return true;
+            }
+
+            @Override
+            public void onSwiped(@androidx.annotation.NonNull RecyclerView.ViewHolder viewHolder, int direction) { }
+        };
+        new androidx.recyclerview.widget.ItemTouchHelper(callback).attachToRecyclerView(recyclerView);
 
         // Search logic
         searchInput.addTextChangedListener(new TextWatcher() {

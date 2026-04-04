@@ -13,7 +13,7 @@
         android:layout_height="24dp"
         android:src="@drawable/ic_dumbbell"
         android:contentDescription="Icono Ejercicio"
-        android:tint="@color/vivid_blue"/>
+        app:tint="@color/vivid_blue"/>
 
     <TextView
         android:id="@+id/tvExerciseName"

@@ -27,6 +27,12 @@ public class TrackerAdapter extends RecyclerView.Adapter<TrackerAdapter.Exercise
         this.exercises = exercises;
     }
 
+    public void moveItem(int fromPosition, int toPosition) {
+        ExerciseEntry item = exercises.remove(fromPosition);
+        exercises.add(toPosition, item);
+        notifyItemMoved(fromPosition, toPosition);
+    }
+
     @NonNull
     @Override
     public ExerciseViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -81,6 +87,7 @@ public class TrackerAdapter extends RecyclerView.Adapter<TrackerAdapter.Exercise
             if (tvWeightHeader != null) tvWeightHeader.setText(headerText);
 
             tvUnitToggle.setOnClickListener(v -> {
+                String oldUnit = exercise.unit;
                 switch (exercise.unit) {
                     case Constants.UNIT_KG:
                         exercise.unit = Constants.UNIT_LBS;
@@ -92,6 +99,10 @@ public class TrackerAdapter extends RecyclerView.Adapter<TrackerAdapter.Exercise
                         exercise.unit = Constants.UNIT_KG;
                         break;
                 }
+
+                // Show warning when unit changes during tracking
+                android.widget.Toast.makeText(itemView.getContext(), "Unidad cambiada a " + exercise.unit, android.widget.Toast.LENGTH_SHORT).show();
+
                 notifyItemChanged(getAdapterPosition());
             });
 

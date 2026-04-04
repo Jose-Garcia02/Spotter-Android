@@ -121,6 +121,24 @@ public class TrackerActivity extends AppCompatActivity {
                 }
             }
         });
+
+        adapter = new TrackerAdapter(viewModel.getExerciseList());
+        recyclerView.setAdapter(adapter);
+
+        androidx.recyclerview.widget.ItemTouchHelper.SimpleCallback callback = new androidx.recyclerview.widget.ItemTouchHelper.SimpleCallback(
+                androidx.recyclerview.widget.ItemTouchHelper.UP | androidx.recyclerview.widget.ItemTouchHelper.DOWN,
+                0
+        ) {
+            @Override
+            public boolean onMove(@androidx.annotation.NonNull RecyclerView recyclerView, @androidx.annotation.NonNull RecyclerView.ViewHolder viewHolder, @androidx.annotation.NonNull RecyclerView.ViewHolder target) {
+                adapter.moveItem(viewHolder.getAdapterPosition(), target.getAdapterPosition());
+                return true;
+            }
+
+            @Override
+            public void onSwiped(@androidx.annotation.NonNull RecyclerView.ViewHolder viewHolder, int direction) { }
+        };
+        new androidx.recyclerview.widget.ItemTouchHelper(callback).attachToRecyclerView(recyclerView);
     }
 
     private void setupButtons() {
@@ -407,11 +425,9 @@ public class TrackerActivity extends AppCompatActivity {
                 dao.insertSets(setsToSave);
             }
 
-            if (editId == -1) {
-                clearCacheOnBackground();
-            }
+            clearCacheOnBackground();
 
-            // Retroalimentación UI
+            // Retroalimentacin UI
             runOnUiThread(() -> {
                 Toast.makeText(this, R.string.workout_saved, Toast.LENGTH_SHORT).show();
                 finish();

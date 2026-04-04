@@ -214,14 +214,6 @@ public class CsvImporter {
         try {
             BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
             String line;
-            // Simple validation map to avoid full duplicates if needed, but timestamp collision is rare unless exact copy.
-            // Let's just iterate and insert.
-            // Better: Check if timestamp exists? BodyWeightLog ID is auto-gen.
-            // If we import the same file twice, we will duplicate data unless we check.
-            // Let's check strict dupe on timestamp? Or Timestamp + Weight?
-            // For now, let's assume raw import. User responsibility.
-            // Or better, check if timestamp exists within a small margin?
-            // Let's just parse.
 
             int added = 0;
             while ((line = reader.readLine()) != null) {
@@ -231,24 +223,50 @@ public class CsvImporter {
                 String[] tokens = line.split(",");
                 if (tokens.length < 3) continue;
 
-                // Format: Timestamp, ReadableDate, Weight
                 try {
-                    long timestamp = Long.parseLong(tokens[0].trim());
+                    long timestamp = parseLongOrDate(tokens[0].trim());
                     float weight = Float.parseFloat(tokens[2].trim());
 
-                    // Basic duplicate check by timestamp?
-                    // We can't easily query by timestamp efficiently without an index or specific query.
-                    // Let's add the query to DAO later if needed. For now plain insert.
+                    if (weight < 1f || weight > 300f) {
+                        Log.w(TAG, "Peso fuera de rango: " + weight);
+                        continue;
+                    }
+
+                    BodyWeightLog existing = dao.getByTimestampRange(timestamp - 86400000, timestamp + 86400000);
+                    if (existing != null) {
+                        Log.i(TAG, "Duplicado detectado, saltando");
+                        continue;
+                    }
+
                     BodyWeightLog log = new BodyWeightLog(timestamp, weight, null);
                     dao.insert(log);
                     added++;
                 } catch (Exception e) {
-                    Log.e(TAG, "Skipping invalid line: " + line, e);
+                    Log.e(TAG, "Error en lnea: " + line, e);
                 }
             }
             Log.d(TAG, "Body Weight Import finished. Added " + added + " entries.");
         } catch (Exception e) {
             Log.e(TAG, "Error importing Body Weight CSV stream", e);
+        }
+    }
+
+    private static long parseLongOrDate(String value) {
+        try {
+            return Long.parseLong(value);
+        } catch (NumberFormatException e) {
+            java.text.SimpleDateFormat[] formats = new java.text.SimpleDateFormat[]{
+                    new java.text.SimpleDateFormat("dd/MM/yyyy", java.util.Locale.getDefault()),
+                    new java.text.SimpleDateFormat("MM/dd/yyyy", java.util.Locale.getDefault()),
+                    new java.text.SimpleDateFormat("yyyy-MM-dd", java.util.Locale.getDefault())
+            };
+            for (java.text.SimpleDateFormat format : formats) {
+                try {
+                    java.util.Date date = format.parse(value);
+                    if (date != null) return date.getTime();
+                } catch (java.text.ParseException ignored) {}
+            }
+            throw new IllegalArgumentException("Invalid date format: " + value);
         }
     }
 

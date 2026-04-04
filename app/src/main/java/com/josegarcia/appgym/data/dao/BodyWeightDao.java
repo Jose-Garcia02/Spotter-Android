@@ -30,4 +30,7 @@ public interface BodyWeightDao {
 
     @Query("SELECT * FROM body_weight_logs ORDER BY timestamp DESC LIMIT 1")
     LiveData<BodyWeightLog> getLastLog();
+
+    @Query("SELECT * FROM body_weight_logs WHERE timestamp >= :start AND timestamp <= :end LIMIT 1")
+    BodyWeightLog getByTimestampRange(long start, long end);
 }
