@@ -198,7 +198,7 @@ public abstract class AppDatabase extends RoomDatabase {
 
                                         // Split 1: Upper/Lower
                                         Split s1 = new Split("Upper / Lower", "Frecuencia 4 días", false, "Classic");
-                                        s1.isTemplate = false; // User split, not template
+                                        s1.isTemplate = true;  // TEMPLATE, not user split
                                         long ulId = splitDao.insert(s1);
                                         List<Routine> ulRoutines = InitialData.getUpperLowerRoutines((int)ulId);
                                         List<Long> ulRoutineIds = rDao.insertAll(ulRoutines);
@@ -208,7 +208,7 @@ public abstract class AppDatabase extends RoomDatabase {
 
                                         // Split 2: PPL
                                         Split s2 = new Split("Push / Pull / Legs", "Frecuencia 6 días", false, "Classic");
-                                        s2.isTemplate = false; // User split, not template
+                                        s2.isTemplate = true;  // TEMPLATE, not user split
                                         long pplId = splitDao.insert(s2);
                                         List<Routine> pplRoutines = InitialData.getPPLRoutines((int)pplId);
                                         List<Long> pplIds = rDao.insertAll(pplRoutines);
@@ -218,7 +218,7 @@ public abstract class AppDatabase extends RoomDatabase {
 
                                         // Split 3: Arnold
                                         Split s3 = new Split("Arnold Split", "Pecho/Espalda + Hombro/Brazo + Pierna", false, "Classic");
-                                        s3.isTemplate = false; // User split, not template
+                                        s3.isTemplate = true;  // TEMPLATE, not user split
                                         long arnoldId = splitDao.insert(s3);
                                         List<Routine> arnoldRoutines = InitialData.getArnoldRoutines((int)arnoldId);
                                         List<Long> arnoldIds = rDao.insertAll(arnoldRoutines);
@@ -228,7 +228,7 @@ public abstract class AppDatabase extends RoomDatabase {
 
                                         // Split 4: Full Body
                                         Split s4 = new Split("Full Body", "Frecuencia 3 días", false, "Classic");
-                                        s4.isTemplate = false; // User split, not template
+                                        s4.isTemplate = true;  // TEMPLATE, not user split
                                         long fbId = splitDao.insert(s4);
                                         List<Routine> fbRoutines = InitialData.getFullBodyRoutines((int)fbId);
                                         List<Long> fbIds = rDao.insertAll(fbRoutines);
