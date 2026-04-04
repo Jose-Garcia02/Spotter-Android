@@ -1,21 +1,22 @@
-<resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    
     <style name="Base.Theme.AppGym" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your light theme here. -->
-        <item name="colorPrimary">@color/primary_accent</item>
+        
+        <item name="colorPrimary">@color/md_theme_primary</item>
         <item name="colorPrimaryVariant">@color/secondary_accent</item>
-        <item name="colorOnPrimary">@color/background_dark</item>
+        <item name="colorOnPrimary">@color/md_theme_onPrimary</item>
         <item name="android:statusBarColor">@android:color/transparent</item>
         <item name="android:navigationBarColor">@android:color/transparent</item>
 
-        <!-- Light Theme Adjustments -->
+        
         <item name="android:windowLightStatusBar">true</item>
         <item name="android:textColorPrimary">@color/text_primary</item>
-        <item name="colorOnSurface">@color/text_primary</item>
-    </style>
+        <item name="colorOnSurface">@color/md_theme_onSurface</item>
+    <item name="colorPrimaryContainer">@color/md_theme_primaryContainer</item><item name="colorOnPrimaryContainer">@color/md_theme_onPrimaryContainer</item><item name="colorSecondary">@color/md_theme_secondary</item><item name="colorOnSecondary">@color/md_theme_onSecondary</item><item name="colorSecondaryContainer">@color/md_theme_secondaryContainer</item><item name="colorOnSecondaryContainer">@color/md_theme_onSecondaryContainer</item><item name="colorTertiary">@color/md_theme_secondary</item><item name="colorError">@color/md_theme_error</item><item name="colorOnError">@color/md_theme_onError</item><item name="colorErrorContainer">@color/md_theme_errorContainer</item><item name="colorOnErrorContainer">@color/md_theme_onErrorContainer</item><item name="colorSurface">@color/md_theme_surface</item><item name="colorSurfaceVariant">@color/md_theme_surfaceVariant</item><item name="colorOnSurfaceVariant">@color/md_theme_onSurfaceVariant</item><item name="colorOutline">@color/md_theme_outline</item></style>
 
     <style name="Theme.AppGym" parent="Base.Theme.AppGym">
-        <!-- Add Window Animations -->
+        
         <item name="android:windowAnimationStyle">@style/WindowAnimationTransition</item>
     </style>
 
@@ -26,21 +27,17 @@
         <item name="android:activityCloseExitAnimation">@anim/fade_out</item>
     </style>
 
-    <!-- Specific theme for splash or launcher just in case -->
+    
     <style name="Theme.AppGym.NoActionBar" parent="Theme.AppGym">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
     </style>
 
     <style name="Theme.AppGym.Amoled" parent="Theme.AppGym">
-        <!-- Pure Black Background -->
+        
         <item name="android:windowBackground">@color/black</item>
         <item name="colorSurface">@color/black</item>
-        <!-- Ensure cards also use black or very dark grey if they use colorSurface?
-             Material cards default to colorSurface + elevation overlay.
-             In pure black, elevation is invisible. We need strokes.
-             We can set colorSurface to black.
-             Maybe surfaceVariant for cards? -->
-        <item name="colorSurfaceVariant">@color/background_dark</item> <!-- #050505 slightly lighter than black -->
+        
+        <item name="colorSurfaceVariant">@color/background_dark</item> 
     </style>
 </resources>
